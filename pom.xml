@@ -42,7 +42,7 @@
           提示：当前工程还是 Eclipse 的 src/com/ascent 结构。
           W1 为了不打断前端同学，先让 Maven 直接以 src 为源码根，
           只编译新后端包（common/server/service/dao/db），
-          旧的 bean/ui/util 继续留给旧客户端，W2 再迁移。
+          旧的 bean/ui/util 只剩客户端代码，W2 迁移完成后删除。
         -->
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>

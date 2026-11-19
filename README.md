@@ -1,183 +1,145 @@
 # AscentSys 药品销售管理系统（Java 课程设计）
 
-基于 **Java SE 11 + Swing** 的 C/S 桌面应用。客户端负责登录、注册、商品浏览、商品详情和购物车；服务端通过 **TCP 5150** 提供数据。旧版客户端不依赖数据库，商品和用户数据保存在两个 **UTF-8** 编码的文本文件中。
+当前主线是 **W1 后端**：Java 11 + Socket + SQLite + JUnit。
 
-仓库名：`Java_Curriculum_Design`　项目名：`AscentSys`
+> 旧版文本服务端（`ProductDataServer`、`Handler`、`DataAccessor`、`ProductDataAccessor`）已移除。
+> 旧 Swing 客户端代码暂时保留在 `src/com/ascent/ui` 和 `src/com/ascent/util`，用于迁移参考；它还没有接入新协议，当前不能直接连新服务端。
 
-> W1 后端框架（Maven + SQLite + JUnit）见 [docs/backend-w1.md](docs/backend-w1.md)；下面“启动方式”仍指旧版 Swing 文本数据版本。
+## 当前架构
+
+```text
+客户端（A 迁移中）
+   │  Request(op, payload) / Response(code, message, data)
+   ▼
+ServerMain → ClientHandler → RequestDispatcher
+                               ├─ AuthService（已完成）
+                               ├─ ProductService（W2）
+                               └─ OrderService（W2）
+                                      │
+                                      ▼
+                               UserDao / ProductDao / OrderDao
+                                      │
+                                      ▼
+                                  SQLite
+```
+
+- 服务端入口：`com.ascent.server.ServerMain`
+- 默认端口：`127.0.0.1:5150`
+- 数据库：`data/ascent.db`（首次启动自动建表并迁移旧文本数据）
+- 旧数据：`product.db`、`user.db`（UTF-8，仅作为迁移输入）
 
 ## 技术栈
 
-- Java SE 11（源码/字节码目标 11）
-- Swing / AWT 桌面界面
-- Socket + `ObjectInputStream` / `ObjectOutputStream`（Java 对象序列化）
-- 逗号分隔文本文件（CSV 风格）作为旧版数据源
-- 全项目统一 UTF-8 编码
-- Eclipse / IntelliJ IDEA 工程；W1 后端另有 Maven 构建
+- Java SE 11（Maven `release=11`）
+- Socket + `ObjectInputStream` / `ObjectOutputStream`
+- SQLite + JDBC（`sqlite-jdbc`）
+- PBKDF2WithHmacSHA256 + 随机盐
+- JUnit 5 + Maven
+- 全项目统一 UTF-8
 
 ## 项目结构
 
 ```text
 AscentSys/
-├─ src/
-│  ├─ com/ascent/bean/       Product.java、User.java
-│  ├─ com/ascent/ui/         Ascentsys、LoginFrame、RegistFrame、MainFrame、
-│  │                         ProductPanel、ProductDetailsDialog、
-│  │                         ShoppingCartDialog、ShoppingMessageDialog
-│  ├─ com/ascent/util/       ProtocolPort、ProductDataServer、Handler、
-│  │                         ProductDataClient、UserDataClient、
-│  │                         DataAccessor、ProductDataAccessor、ShoppingCart
-│  └─ images/ss.jpg          商品结构图
-├─ product.db                商品数据（7 列，UTF-8）
-├─ user.db                   用户数据（3 列）
-├─ .project/.classpath       Eclipse 工程配置
-├─ .settings/                Eclipse 编译设置（Java 11）
-├─ bin/                      编译输出（.gitignore 忽略）
-├─ pom.xml                   W1 后端 Maven 构建
-├─ db/schema.sql             W1 SQLite 建表脚本
-├─ test/                     W1 JUnit 测试
-├─ docs/backend-w1.md        W1 后端说明
+├─ pom.xml                      Maven 构建
+├─ db/schema.sql                SQLite 建表脚本
+├─ src/resources/app.properties 端口、数据库路径、旧数据路径
+├─ src/com/ascent/
+│  ├─ common/                   协议、DTO、错误码（共享契约）
+│  ├─ server/                   启动、连接处理、请求分发、Session
+│  ├─ service/                  AuthService、PasswordUtil
+│  ├─ dao/                      UserDao、UserRecord
+│  ├─ db/                       Database、SchemaInitializer、DataMigration
+│  ├─ bean/                     旧客户端实体（待迁移）
+│  ├─ ui/                       旧 Swing 客户端（待迁移）
+│  └─ util/                     旧客户端通信/购物车（待迁移）
+├─ test/com/ascent/             JUnit 5 测试
+├─ product.db / user.db         旧数据（UTF-8，迁移输入）
+├─ docs/backend-w1.md           W1 后端说明
 └─ README.md
 ```
 
-## 运行环境
+`data/`、`target/`、`.m2/` 已在 `.gitignore` 中排除。
 
-| 项目 | 要求 |
-|---|---|
-| JDK | 11 及以上（已在 JDK 21 / 25 验证） |
-| 图形环境 | 支持 Swing 的桌面会话 |
-| 网络 | 本机 5150 端口可用 |
-| 第三方依赖 | 旧版无第三方依赖；W1 后端使用 Maven（sqlite-jdbc / JUnit） |
-| 数据文件 | 项目根目录下的 `product.db`、`user.db` |
-
-## 启动方式
-
-> 项目统一使用 **UTF-8** 编码。编译时显式加 `-encoding UTF-8`；读取 `product.db`/`user.db` 的代码已显式指定 `StandardCharsets.UTF_8`，运行不需要额外指定编码参数。
-
-### 1. 获取代码
+## 快速开始
 
 ```bash
-git clone https://github.com/hmy-AI-bite/Java_Curriculum_Design.git
-cd Java_Curriculum_Design
+# 编译 + 测试
+mvn test
+mvn package
+
+# 复制运行依赖
+mvn dependency:copy-dependencies -DoutputDirectory=target/dependency
+
+# 启动服务端（Windows 用 ; 分隔，Linux/macOS 用 :）
+java -cp "target/classes;target/dependency/*" com.ascent.server.ServerMain
 ```
 
-### 2. 编译
+也可以直接在 IntelliJ 里运行 `com.ascent.server.ServerMain`，Working directory 设为项目根目录。
 
-Windows PowerShell：
+启动时会自动：
 
-```powershell
-# 旧版 Swing 客户端：只编译 bean/ui/util 三个包
-$files = Get-ChildItem src\com\ascent\bean,src\com\ascent\ui,src\com\ascent\util -Recurse -Filter *.java | ForEach-Object FullName
-javac -encoding UTF-8 --release 11 -d bin $files
-New-Item -ItemType Directory -Force bin\images | Out-Null
-Copy-Item src\images\* bin\images -Force
-```
+1. 创建 `data/ascent.db` 和四张表；
+2. 第一次启动把 `product.db`/`user.db` 迁移到 SQLite；
+3. 创建管理员账号。
 
-macOS / Linux：
+默认账号：
 
-```bash
-# 旧版 Swing 客户端：只编译 bean/ui/util 三个包
-mkdir -p bin/images
-find src/com/ascent/bean src/com/ascent/ui src/com/ascent/util -name '*.java' -print > sources.txt
-javac -encoding UTF-8 --release 11 -d bin @sources.txt
-cp -r src/images/. bin/images/
-rm sources.txt
-```
+- 管理员：`admin / admin123`
+- 旧数据用户：`user1 / 1`
 
-> 以上命令只编译旧版客户端；W1 后端（含 SQLite/JUnit）请用 Maven，见 [docs/backend-w1.md](docs/backend-w1.md)。
+## 协议
 
-### 3. 启动（两个终端）
+W1 只实现登录/注册；其他操作码在 `RequestDispatcher` 中返回 `NOT_IMPLEMENTED`。
 
-先启动服务端：
-
-```bash
-java -cp bin com.ascent.util.ProductDataServer
-```
-
-看到 `服务器准备就绪!` 后，再启动客户端：
-
-```bash
-java -cp bin com.ascent.ui.Ascentsys
-```
-
-> 工作目录必须是项目根目录，`product.db` 和 `user.db` 是按相对路径读取的。
-> 客户端必须先能连上服务端，否则登录会提示“服务器连接失败”。
-
-### 4. 示例账号
-
-`user1 / 1`（更多账号见 `user.db`）。
-
-### 5. 用 IDE 运行
-
-**IntelliJ IDEA**
-
-1. `Open` 项目根目录，Project SDK 选择 JDK 11+，Language level 选 11。
-2. `Settings → Editor → File Encodings`，把 Project Encoding 设为 `UTF-8`。
-3. 建两个 Application 运行配置：
-   - 服务端：`com.ascent.util.ProductDataServer`
-   - 客户端：`com.ascent.ui.Ascentsys`
-4. 两个配置的 Working directory 设为项目根目录。
-
-**Eclipse**
-
-1. `File → Import → Existing Projects into Workspace` 导入项目。
-2. `Window → Preferences → General → Workspace → Text file encoding` 选择 `Other: UTF-8`。
-3. 编译级别设为 Java 11。
-
-## 数据文件
-
-两个文件都是无表头的逗号分隔文本，**UTF-8 编码**：
-
-| 文件 | 每行格式 | 说明 |
+| 操作码 | 含义 | 状态 |
 |---|---|---|
-| `product.db` | `产品名称,CAS号,结构图文件名,分子式,价格,数量,类别` | 启动时读入内存；商品数据只读 |
-| `user.db` | `账号,密码,权限` | 权限字段当前未参与判断；注册时追加一行 |
+| 1 | 登录 | 已实现 |
+| 2 | 注册 | 已实现 |
+| 10/11 | 商品列表/详情 | W2 |
+| 20/21 | 创建订单/我的订单 | W2 |
+| 30/31 | 管理员商品增删改 | W2 |
 
-`product.db` 的“结构图文件名”对应 `src/images/` 下的图片，例如 `ss.jpg`。
+协议对象是 `Request(op, payload)` 和 `Response(code, message, data)`，详见 `docs/backend-w1.md`。
 
-## 通信协议
+## 已实现
 
-服务端监听 `localhost:5150`，使用 Java 对象序列化传输数据。客户端先发一个 `int` 操作码：
+- [x] Maven 构建（Java 11、UTF-8、sqlite-jdbc、JUnit 5）
+- [x] SQLite 四张表：`users/products/orders/order_items`
+- [x] 旧 UTF-8 文本迁移：价格转分、库存去单位、密码哈希
+- [x] PBKDF2WithHmacSHA256 + 随机盐
+- [x] 登录/注册 Service + DAO
+- [x] `Request/Response` 协议、`ClientHandler`、`RequestDispatcher`
+- [x] 服务端线程池、只监听 127.0.0.1
+- [x] JUnit：密码、登录/注册、迁移
+- [x] 默认管理员、旧数据迁移
+- [x] 移除旧版文本服务端
 
-| 操作码 | 常量 | 请求内容 | 响应 |
-|---|---|---|---|
-| 100 | `OP_GET_PRODUCT_CATEGORIES` | 无 | `ArrayList<String>` 分类列表 |
-| 101 | `OP_GET_PRODUCTS` | 分类名 `String` | `ArrayList<Product>` |
-| 102 | `OP_GET_USERS` | 无 | `HashMap<String,User>` |
-| 103 | `OP_ADD_USERS` | `User` 对象 | 无（服务端追加写入 `user.db`） |
+## 待完善
 
-## 现有功能
+- [ ] **客户端迁移**：A 把旧 Swing 客户端接到新 `Request/Response` 协议
+- [ ] **商品模块**：`ProductDao/ProductService`、列表/搜索/详情、管理员 CRUD
+- [ ] **订单模块**：`OrderDao/OrderService`、库存校验、事务回滚、订单查询
+- [ ] **权限**：管理员操作在服务端用 `ClientSession` 校验
+- [ ] **统一入口**：`Launcher` 支持 `server/migrate/client/all`
+- [ ] **可执行 jar**：Maven shade 打 fat jar
+- [ ] **测试**：库存不足回滚、并发下单、权限拒绝
+- [ ] **清理旧客户端**：迁移完成后删除 `ui/` 和旧 `util/` 代码
 
-- [x] 用户登录：账号密码校验，数据来自 `user.db`
-- [x] 用户注册：客户端先查重，服务端追加写入 `user.db`
-- [x] 商品分类：从 `product.db` 读取分类并排序，填入下拉框
-- [x] 商品列表：按分类查询，按商品名称排序
-- [x] 商品详情：展示名称、CAS 号、分子式、数量、类别和结构图
-- [x] 购物车：加入商品（按名称去重）、查看、清空
-- [x] 提交购物车：检查数量输入框非空并弹出提示框
-- [x] 主界面：Tab、菜单、Look & Feel 切换、关于、退出
-- [x] 服务端：监听 5150，每个客户端连接一个 `Handler` 线程
-- [x] 通信：操作码 + Java 对象序列化
+## 课程设计点
 
-## 待完善功能
-
-- [ ] **订单与结算**：提交购物车只弹提示，没有生成订单、计算总价、扣减库存
-- [ ] **商品管理**：不支持新增/修改/删除商品，`product.db` 只读
-- [ ] **用户与权限**：`User.authority` 未参与权限判断；密码明文存储
-- [ ] **购物车隔离**：`ShoppingCart` 使用 `static` 列表，所有窗口/用户共享，关闭客户端即丢失
-- [ ] **注册校验**：两次密码一致性判断比较的是同一个字段；空密码用 `==` 比较字符串
-- [ ] **菜单功能**：“打开”“保存”菜单没有绑定事件
-- [ ] **价格**：`Product.price` 已解析，但详情、购物车和结算都未使用
-- [ ] **网络健壮性**：无断线重连、服务端无优雅关闭、异常提示不完整
-- [ ] **工程化**：旧客户端仍是无 Maven 的 Eclipse 工程；W1 后端已单独引入 Maven 与 JUnit（见 [docs/backend-w1.md](docs/backend-w1.md)），前端尚未迁移
-
-## 已知问题
-
-- 注册窗口的“重复密码”校验实际比较的是同一个密码字段，等于没有校验。
-- 提交购物车提示“您购物信息已经保存，谢谢”，但实际没有保存任何数据。
-- `bin/` 和 `.idea/` 不提交到仓库，克隆后需要按“启动方式”重新编译并配置 IDE。
+- 面向对象分层：DTO / Service / DAO
+- 集合与泛型：`List<ProductDTO>`、`Map`、`JTable` 数据模型（迁移后）
+- 异常处理：`AppException` + 错误码
+- I/O 与编码：旧文本 UTF-8 迁移
+- 多线程：服务端 `ExecutorService`、客户端 `SwingWorker`（迁移后）
+- 网络：Socket + 对象序列化
+- JDBC：`PreparedStatement`、事务
+- 安全：PBKDF2 + 盐、服务端 Session 鉴权
+- 测试与构建：JUnit 5、Maven
 
 ## 说明
 
-- 本项目为 Java 课程设计，仅用于学习交流。
-- 仓库提交源码、数据文件和 Eclipse 元数据；编译产物和 IDE 私有配置由 `.gitignore` 排除。
+- 旧版文本服务端已删除，不再通过 `ProductDataServer` 启动。
+- 旧 Swing 客户端尚未迁移，当前只作为 W2 的迁移参考，不要用它连新服务端。
+- 详细的后端启动、W2 TODO 和踩坑提示见 [docs/backend-w1.md](docs/backend-w1.md)。

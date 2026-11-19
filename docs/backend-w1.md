@@ -3,6 +3,9 @@
 > 负责人：后端 B（你）
 > 范围：Maven + SQLite + 登录/注册 + 协议骨架 + JUnit
 > 目标：W1 结束时 `mvn test` 全绿，服务端能启动，登录/注册走 SQLite。
+>
+> 旧版文本服务端（`ProductDataServer`、`Handler`、`DataAccessor`、
+> `ProductDataAccessor`）已删除；旧 Swing 客户端代码暂留，等 A 迁移到新协议。
 
 ## 1. 本周围绕什么做
 
