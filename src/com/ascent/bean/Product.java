@@ -1,42 +1,45 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°Productç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.bean;
 
 /**
- * ÊµÌåÀàProduct£¬ÓÃÀ´ÃèÊöÉÌÆ·µÄĞÅÏ¢Àà
+ * å®ä½“ç±»Productï¼Œç”¨æ¥æè¿°å•†å“çš„ä¿¡æ¯ç±»
  * @author ascent
  * @version 1.0
  */
 @SuppressWarnings("serial")
 public class Product implements java.lang.Comparable, java.io.Serializable {
 
-	private String productname; // Ò©Æ·Ãû³Æ
+	private String productname; // è¯å“åç§°
 
-	private String cas; // »¯Ñ§ÎÄÕªµÇ¼ÇºÅ
+	private String cas; // åŒ–å­¦æ–‡æ‘˜ç™»è®°å·
 
-	private String structure; // ½á¹¹Í¼Ãû³Æ
+	private String structure; // ç»“æ„å›¾åç§°
 
-	private String formula; // ¹«Ê½
+	private String formula; // å…¬å¼
 
-	private String price; // ¼Û¸ñ
+	private String price; // ä»·æ ¼
 
-	private String realstock; // ÊıÁ¿
+	private String realstock; // æ•°é‡
 
-	private String category; // Àà±ğ
+	private String category; // ç±»åˆ«
 	
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public Product() {
 	}
 
 	/**
-	 * ´øËùÓĞ²ÎÊı¹¹Ôì·½·¨
-	 * @param productName Ò©Æ·Ãû³Æ
-	 * @param cas »¯Ñ§ÎÄÕªµÇ¼ÇºÅ
-	 * @param structure ½á¹¹Í¼Ãû³Æ
-	 * @param formula ¹«Ê½
-	 * @param price ¼Û¸ñ
-	 * @param realstock ÊıÁ¿
-	 * @param category Àà±ğ
+	 * å¸¦æ‰€æœ‰å‚æ•°æ„é€ æ–¹æ³•
+	 * @param productName è¯å“åç§°
+	 * @param cas åŒ–å­¦æ–‡æ‘˜ç™»è®°å·
+	 * @param structure ç»“æ„å›¾åç§°
+	 * @param formula å…¬å¼
+	 * @param price ä»·æ ¼
+	 * @param realstock æ•°é‡
+	 * @param category ç±»åˆ«
 	 */
 	public Product(String productName, String cas, String structure,
 			String formula, String price, String realstock, String category) {
@@ -147,11 +150,17 @@ public class Product implements java.lang.Comparable, java.io.Serializable {
 		this.structure = structure;
 	}
 
+	/**
+	 * å®ç°toStringåŠŸèƒ½ã€‚
+	 */
 	@Override
 	public String toString() {
-		return this.getProductname() + "    CAS£º" + this.getCas();
+		return this.getProductname() + "    CASï¼š" + this.getCas();
 	}
 
+	/**
+	 * å®ç°compareToåŠŸèƒ½ã€‚
+	 */
 	public int compareTo(Object o) {
 		Product product = (Product) o;
 		return this.getProductname().compareTo(product.getProductname());

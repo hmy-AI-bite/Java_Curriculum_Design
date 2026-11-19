@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°RegistFrameç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.ui;
 
 import java.awt.BorderLayout;
@@ -22,7 +25,7 @@ import javax.swing.JTextField;
 import com.ascent.util.UserDataClient;
 
 /**
- * ÓÃ»§×¢²á´°Ìå
+ * ç”¨æˆ·æ³¨å†Œçª—ä½“
  * @author ascent
  * @version 1.0
  */
@@ -39,25 +42,25 @@ public class RegistFrame extends JFrame {
 	private UserDataClient userDataClient;
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨£¬³õÊ¼»¯ÓÃ»§×¢²á´°Ìå
+	 * é»˜è®¤æ„é€ æ–¹æ³•ï¼Œåˆå§‹åŒ–ç”¨æˆ·æ³¨å†Œçª—ä½“
 	 */
 	public RegistFrame() {
-		this.setTitle("ÓÃ»§×¢²á");
+		this.setTitle("ç”¨æˆ·æ³¨å†Œ");
 
 		Container container = this.getContentPane();
 		container.setLayout(new BorderLayout());
 
 		JPanel registPanel = new JPanel();
 
-		JLabel userLabel = new JLabel("ÓÃ»§ÕÊºÅ£º");
-		JLabel passwordLabel = new JLabel("ÓÃ»§ÃÜÂë£º");
-		JLabel repasswordLabel = new JLabel("ÖØ¸´ÃÜÂë£º");
+		JLabel userLabel = new JLabel("ç”¨æˆ·å¸å·ï¼š");
+		JLabel passwordLabel = new JLabel("ç”¨æˆ·å¯†ç ï¼š");
+		JLabel repasswordLabel = new JLabel("é‡å¤å¯†ç ï¼š");
 
 		userText = new JTextField(15);
 		password = new JPasswordField(15);
 		repassword = new JPasswordField(15);
-		JButton regist = new JButton("×¢²á");
-		JButton exitButton = new JButton("ÍË³ö");
+		JButton regist = new JButton("æ³¨å†Œ");
+		JButton exitButton = new JButton("é€€å‡º");
 
 		registPanel.add(userLabel);
 		registPanel.add(new JScrollPane(userText));
@@ -85,9 +88,15 @@ public class RegistFrame extends JFrame {
 		regist.addActionListener(new RegistActionListener());
 		repassword.addFocusListener(new MyFocusListener());
 		this.addWindowListener(new WindowCloser());
-		this.addWindowFocusListener(new WindowFocusListener() {// ÉèÖÃ¸¸´°¿Ú
+		this.addWindowFocusListener(new WindowFocusListener() {// è®¾ç½®çˆ¶çª—å£
+					/**
+					 * å¤„ç†çª—å£è·å¾—ç„¦ç‚¹äº‹ä»¶ã€‚
+					 */
 					public void windowGainedFocus(WindowEvent e) {
 					}
+					/**
+					 * å¤„ç†çª—å£å¤±å»ç„¦ç‚¹äº‹ä»¶ã€‚
+					 */
 					public void windowLostFocus(WindowEvent e) {
 						e.getWindow().toFront();
 					}
@@ -100,10 +109,13 @@ public class RegistFrame extends JFrame {
 	}
 
 	/**
-	 * ÍË³ö°´Å¥ÊÂ¼ş¼àÌı
+	 * é€€å‡ºæŒ‰é’®äº‹ä»¶ç›‘å¬
 	 * @author ascent
 	 */
 	class ExitActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			setVisible(false);
 			dispose();
@@ -111,26 +123,32 @@ public class RegistFrame extends JFrame {
 	}
 
 	/**
-	 * ×¢²á°´Å¥ÊÂ¼ş¼àÌı
+	 * æ³¨å†ŒæŒ‰é’®äº‹ä»¶ç›‘å¬
 	 * @author ascent
 	 */
 	class RegistActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent arg0) {
-			// ÓÃ»§×¢²á²Ù×÷
+			// ç”¨æˆ·æ³¨å†Œæ“ä½œ
 			boolean bo = userDataClient.addUser(userText.getText(), new String(password.getPassword()));
 			if (bo) {
-				tip.setText("×¢²á³É¹¦£¡");
+				tip.setText("æ³¨å†ŒæˆåŠŸï¼");
 			} else {
-				tip.setText("ÓÃ»§ÃûÒÑ´æÔÚ£¡");
+				tip.setText("ç”¨æˆ·åå·²å­˜åœ¨ï¼");
 			}
 		}
 	}
 
 	/**
-	 * "¹Ø±Õ´°¿Ú"ÊÂ¼ş´¦ÀíÄÚ²¿Àà
+	 * "å…³é—­çª—å£"äº‹ä»¶å¤„ç†å†…éƒ¨ç±»
 	 * @author ascent
 	 */
 	class WindowCloser extends WindowAdapter {
+		/**
+		 * å¤„ç†çª—å£å…³é—­äº‹ä»¶ã€‚
+		 */
 		public void windowClosing(WindowEvent e) {
 			setVisible(false);
 			dispose();
@@ -138,22 +156,28 @@ public class RegistFrame extends JFrame {
 	}
 
 	/**
-	 * ÃÜÂë²»Ò»ÖÂ´¥·¢µÄÊÂ¼ş¼àÌıÆ÷´¦ÀíÀà
+	 * å¯†ç ä¸ä¸€è‡´è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨å¤„ç†ç±»
 	 * @author ascent
 	 */
 	class MyFocusListener implements FocusListener {
 
+		/**
+		 * å¤„ç†ç»„ä»¶è·å¾—ç„¦ç‚¹äº‹ä»¶ã€‚
+		 */
 		public void focusGained(FocusEvent arg0) {
 		}
 
+		/**
+		 * å¤„ç†ç»„ä»¶å¤±å»ç„¦ç‚¹äº‹ä»¶ã€‚
+		 */
 		public void focusLost(FocusEvent e) {
 			if (e.getSource().equals(password)) {
 				if (new String(password.getPassword()) == "" || new String(password.getPassword()) == null) {
-					tip.setText("ÃÜÂë²»ÄÜÎª¿Õ!");
+					tip.setText("å¯†ç ä¸èƒ½ä¸ºç©º!");
 				}
 			} else if (e.getSource().equals(repassword)) {
 				if (!new String(password.getPassword()).equals(new String(password.getPassword()))) {
-					tip.setText("Á½´ÎÃÜÂë²»Ò»ÖÂ£¡");
+					tip.setText("ä¸¤æ¬¡å¯†ç ä¸ä¸€è‡´ï¼");
 				}
 			} else {
 				tip.setText("");

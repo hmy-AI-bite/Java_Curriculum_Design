@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ShoppingMessageDialogç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.ui;
 
 import java.awt.BorderLayout;
@@ -18,7 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 /**
- * È·ÈÏ¹ºÂòÉÌÆ·ÌáÊ¾´°Ìå
+ * ç¡®è®¤è´­ä¹°å•†å“æç¤ºçª—ä½“
  * @author ascent
  * @version 1.0
  */
@@ -28,17 +31,17 @@ public class ShoppingMessageDialog extends JDialog {
 	protected Frame parentFrame;
 
 	/**
-	 * ´øÒ»¸ö²ÎÊıµÄ¹¹Ôì·½·¨
-	 * @param theParentFrame ¸¸´°Ìå
+	 * å¸¦ä¸€ä¸ªå‚æ•°çš„æ„é€ æ–¹æ³•
+	 * @param theParentFrame çˆ¶çª—ä½“
 	 */
 	public ShoppingMessageDialog(Frame theParentFrame) {
-		super(theParentFrame, "¹ºÎïĞÅÏ¢", true);
+		super(theParentFrame, "è´­ç‰©ä¿¡æ¯", true);
 		parentFrame = theParentFrame;
 		shoppingMessage();
 	}
 
 	/**
-	 * ¹¹½¨µ¯³öÈ·ÈÏĞÅÏ¢´°Ìå
+	 * æ„å»ºå¼¹å‡ºç¡®è®¤ä¿¡æ¯çª—ä½“
 	 */
 	public void shoppingMessage() {
 		Container container = this.getContentPane();
@@ -59,7 +62,7 @@ public class ShoppingMessageDialog extends JDialog {
 		c.anchor = GridBagConstraints.WEST;
 		c.insets = new Insets(10, 0, 2, 10);
 
-		String str = "Äú¹ºÎïĞÅÏ¢ÒÑ¾­±£´æ£¬Ğ»Ğ»¡£";
+		String str = "æ‚¨è´­ç‰©ä¿¡æ¯å·²ç»ä¿å­˜ï¼Œè°¢è°¢ã€‚";
 		JLabel pruductLabel = new JLabel(str);
 		pruductLabel.setForeground(Color.black);
 		infoPanel.add(pruductLabel, c);
@@ -82,10 +85,13 @@ public class ShoppingMessageDialog extends JDialog {
 	}
 
 	/**
-	 * ´¦Àí"OK"°´Å¥µÄÄÚ²¿Àà
+	 * å¤„ç†"OK"æŒ‰é’®çš„å†…éƒ¨ç±»
 	 * @author ascent
 	 */
 	class OkButtonActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			setVisible(false);
 		}

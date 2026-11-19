@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°LoginFrameç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.ui;
 
 import java.awt.BorderLayout;
@@ -21,7 +24,7 @@ import com.ascent.bean.User;
 import com.ascent.util.UserDataClient;
 
 /**
- * ÓÃ»§µÇÂ½´°Ìå
+ * ç”¨æˆ·ç™»é™†çª—ä½“
  * @author ascent
  * @version 1.0
  */
@@ -37,26 +40,26 @@ public class LoginFrame extends JFrame {
 	protected UserDataClient userDataClient;
 
 	/**
-	 * Ä¬ÈÏµÄ¹¹Ôì·½·¨£¬³õÊ¼»¯µÇÂ½´°Ìå
+	 * é»˜è®¤çš„æ„é€ æ–¹æ³•ï¼Œåˆå§‹åŒ–ç™»é™†çª—ä½“
 	 */
 	public LoginFrame() {
 
-		setTitle("ÓÃ»§µÇÂ½");
+		setTitle("ç”¨æˆ·ç™»é™†");
 
 		Container container = this.getContentPane();
 		container.setLayout(new BorderLayout());
 
 		JPanel loginPanel = new JPanel();
 
-		JLabel userLabel = new JLabel("ÓÃ»§ÕÊºÅ£º");
-		JLabel passwordLabel = new JLabel("ÓÃ»§ÃÜÂë£º");
+		JLabel userLabel = new JLabel("ç”¨æˆ·å¸å·ï¼š");
+		JLabel passwordLabel = new JLabel("ç”¨æˆ·å¯†ç ï¼š");
 
 		userText = new JTextField(15);
 		password = new JPasswordField(15);
 
-		JButton loginButton = new JButton("µÇÂ½");
-		JButton regist = new JButton("×¢²á");
-		JButton exitButton = new JButton("ÍË³ö");
+		JButton loginButton = new JButton("ç™»é™†");
+		JButton regist = new JButton("æ³¨å†Œ");
+		JButton exitButton = new JButton("é€€å‡º");
 
 		loginPanel.add(userLabel);
 		loginPanel.add(new JScrollPane(userText));
@@ -91,9 +94,12 @@ public class LoginFrame extends JFrame {
 	}
 
 	/**
-	 * ´¦Àí"ÍË³ö"°´Å¥ÊÂ¼ş¼àÌıµÄÄÚ²¿Àà
+	 * å¤„ç†"é€€å‡º"æŒ‰é’®äº‹ä»¶ç›‘å¬çš„å†…éƒ¨ç±»
 	 */
 	class ExitActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			setVisible(false);
 			dispose();
@@ -102,10 +108,13 @@ public class LoginFrame extends JFrame {
 	}
 
 	/**
-	 * ´¦Àí"µÇÂ½"°´Å¥ÊÂ¼ş¼àÌıµÄÄÚ²¿Àà
+	 * å¤„ç†"ç™»é™†"æŒ‰é’®äº‹ä»¶ç›‘å¬çš„å†…éƒ¨ç±»
 	 */
 	class LoginActionListener implements ActionListener {
 
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent e) {
 			boolean bo = false;
 			HashMap userTable = userDataClient.getUsers();
@@ -125,29 +134,35 @@ public class LoginFrame extends JFrame {
 					MainFrame myFrame = new MainFrame();
 					myFrame.setVisible(true);
 				} else {
-					tip.setText("ÕÊºÅ²»´æÔÚ,»òÃÜÂë´íÎó.");
+					tip.setText("å¸å·ä¸å­˜åœ¨,æˆ–å¯†ç é”™è¯¯.");
 				}
 			} else {
-				tip.setText("·şÎñÆ÷Á¬½ÓÊ§°Ü,ÇëÉÔºòÔÙÊÔ.");
+				tip.setText("æœåŠ¡å™¨è¿æ¥å¤±è´¥,è¯·ç¨å€™å†è¯•.");
 			}
 		}
 	}
 
 	/**
-	 * ´¦Àí"×¢²á"°´Å¥ÊÂ¼ş¼àÌıµÄÄÚ²¿Àà.
+	 * å¤„ç†"æ³¨å†Œ"æŒ‰é’®äº‹ä»¶ç›‘å¬çš„å†…éƒ¨ç±».
 	 */
 	class RegistActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent arg0) {
-			// ´ò¿ª×¢²áÓÃ»§µÄ´°¿Ú
+			// æ‰“å¼€æ³¨å†Œç”¨æˆ·çš„çª—å£
 			RegistFrame registFrame = new RegistFrame();
 			registFrame.setVisible(true);
 		}
 	}
 
 	/**
-	 * ´¦Àí"¹Ø±Õ´°¿Ú"ÊÂ¼ş¼àÌıµÄÄÚ²¿Àà.
+	 * å¤„ç†"å…³é—­çª—å£"äº‹ä»¶ç›‘å¬çš„å†…éƒ¨ç±».
 	 */
 	class WindowCloser extends WindowAdapter {
+		/**
+		 * å¤„ç†çª—å£å…³é—­äº‹ä»¶ã€‚
+		 */
 		public void windowClosing(WindowEvent e) {
 			setVisible(false);
 			dispose();

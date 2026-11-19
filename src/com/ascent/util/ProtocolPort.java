@@ -1,38 +1,41 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ProtocolPortç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 /**
- * socket±à³ÌËùÉæ¼°µÄ±êÖ¾
+ * socketç¼–ç¨‹æ‰€æ¶‰åŠçš„æ ‡å¿—
  * @author ascent
  * @version 1.0
  */
 public interface ProtocolPort {
 	/**
-	 * »ñÈ¡ËùÓĞÉÌÆ··ÖÀàÃû³Æ±êÖ¾
+	 * è·å–æ‰€æœ‰å•†å“åˆ†ç±»åç§°æ ‡å¿—
 	 */
 	public static final int OP_GET_PRODUCT_CATEGORIES = 100;
 
 	/**
-	 * ¸ù¾İ·ÖÀàÃû³Æ»ñµÃ¸Ã·ÖÀàÏÂµÄËùÓĞÉÌÆ·¶ÔÏó±êÖ¾
+	 * æ ¹æ®åˆ†ç±»åç§°è·å¾—è¯¥åˆ†ç±»ä¸‹çš„æ‰€æœ‰å•†å“å¯¹è±¡æ ‡å¿—
 	 */
 	public static final int OP_GET_PRODUCTS = 101;
 
 	/**
-	 * »ñÈ¡ÓÃ»§±êÖ¾
+	 * è·å–ç”¨æˆ·æ ‡å¿—
 	 */
 	public static final int OP_GET_USERS = 102;
 
 	/**
-	 * ×¢²áÓÃ»§±êÖ¾
+	 * æ³¨å†Œç”¨æˆ·æ ‡å¿—
 	 */
 	public static final int OP_ADD_USERS = 103;
 
 	/**
-	 * Ä¬ÈÏ¶Ë¿ÚºÅ
+	 * é»˜è®¤ç«¯å£å·
 	 */
 	public static final int DEFAULT_PORT = 5150;
 
 	/**
-	 * Ä¬ÈÏ·şÎñÆ÷µØÖ·
+	 * é»˜è®¤æœåŠ¡å™¨åœ°å€
 	 */
 	public static final String DEFAULT_HOST = "localhost";
 }

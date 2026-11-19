@@ -31,6 +31,16 @@ Thumbs.db
 Desktop.ini
 .DS_Store
 
+# 本机 Maven 仓库（沙箱下不能写 C:\Users\...\.m2）
+.m2/
+.m2repo/
+
+# SQLite 运行数据（W1 起）
+data/
+*.db-journal
+*.db-wal
+*.db-shm
+
 # 日志与临时文件
 *.log
 sources.txt

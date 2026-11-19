@@ -1,12 +1,16 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ProductDataAccessorç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.util.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import com.ascent.bean.Product;
 import com.ascent.bean.User;
 
 /**
- * ²úÆ·Êı¾İ¶ÁÈ¡µÄÊµÏÖÀà
+ * äº§å“æ•°æ®è¯»å–çš„å®ç°ç±»
  * @author ascent
  * @version 1.0
  */
@@ -14,43 +18,43 @@ public class ProductDataAccessor extends DataAccessor {
 
 	// ////////////////////////////////////////////////////
 	//
-	// ²úÆ·ÎÄ¼ş¸ñÊ½ÈçÏÂ
-	// ²úÆ·Ãû³Æ,»¯Ñ§ÎÄÕªµÇ¼ÇºÅ,½á¹¹Í¼,¹«Ê½,¼Û¸ñ,ÊıÁ¿,Àà±ğ
+	// äº§å“æ–‡ä»¶æ ¼å¼å¦‚ä¸‹
+	// äº§å“åç§°,åŒ–å­¦æ–‡æ‘˜ç™»è®°å·,ç»“æ„å›¾,å…¬å¼,ä»·æ ¼,æ•°é‡,ç±»åˆ«
 	// ----------------------------------------------------
 	//
 	// ////////////////////////////////////////////////////
 
 	// ////////////////////////////////////////////////////
 	//
-	// ÓÃ»§ÎÄ¼ş¸ñÊ½ÈçÏÂ
-	// ÓÃ»§ÕÊºÅ,ÓÃ»§ÃÜÂë,ÓÃ»§È¨ÏŞ
+	// ç”¨æˆ·æ–‡ä»¶æ ¼å¼å¦‚ä¸‹
+	// ç”¨æˆ·å¸å·,ç”¨æˆ·å¯†ç ,ç”¨æˆ·æƒé™
 	// ----------------------------------------------------
 	//
 	// ////////////////////////////////////////////////////
 	/**
-	 * ÉÌÆ·ĞÅÏ¢Êı¾İÎÄ¼şÃû
+	 * å•†å“ä¿¡æ¯æ•°æ®æ–‡ä»¶å
 	 */
 	protected static final String PRODUCT_FILE_NAME = "product.db";
 
 	/**
-	 * ÓÃ»§ĞÅÏ¢Êı¾İÎÄ¼şÃû
+	 * ç”¨æˆ·ä¿¡æ¯æ•°æ®æ–‡ä»¶å
 	 */
 	protected static final String USER_FILE_NAME = "user.db";
 
 	/**
-	 * Êı¾İ¼ÇÂ¼µÄ·Ö¸î·û
+	 * æ•°æ®è®°å½•çš„åˆ†å‰²ç¬¦
 	 */
 	protected static final String RECORD_SEPARATOR = "----------";
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public ProductDataAccessor() {
 		load();
 	}
 
 	/**
-	 * ¶ÁÈ¡Êı¾İµÄ·½·¨
+	 * è¯»å–æ•°æ®çš„æ–¹æ³•
 	 */
 	@Override
 	public void load() {
@@ -69,8 +73,10 @@ public class ProductDataAccessor extends DataAccessor {
 		String userName, password, authority;
 
 		try {
-			log("¶ÁÈ¡ÎÄ¼ş: " + PRODUCT_FILE_NAME + "...");
-			BufferedReader inputFromFile1 = new BufferedReader(new FileReader(PRODUCT_FILE_NAME));
+			log("è¯»å–æ–‡ä»¶: " + PRODUCT_FILE_NAME + "...");
+			// å…¨é¡¹ç›®ç»Ÿä¸€ UTF-8ï¼Œæ˜¾å¼æŒ‡å®šå­—ç¬¦é›†ï¼Œä¸ä¾èµ–æ“ä½œç³»ç»Ÿé»˜è®¤ç¼–ç 
+			BufferedReader inputFromFile1 = new BufferedReader(new InputStreamReader(
+					new FileInputStream(PRODUCT_FILE_NAME), StandardCharsets.UTF_8));
 
 			while ((line = inputFromFile1.readLine()) != null) {
 
@@ -96,11 +102,12 @@ public class ProductDataAccessor extends DataAccessor {
 			}
 
 			inputFromFile1.close();
-			log("ÎÄ¼ş¶ÁÈ¡½áÊø!");
+			log("æ–‡ä»¶è¯»å–ç»“æŸ!");
 
 			line = "";
-			log("¶ÁÈ¡ÎÄ¼ş: " + USER_FILE_NAME + "...");
-			BufferedReader inputFromFile2 = new BufferedReader(new FileReader(USER_FILE_NAME));
+			log("è¯»å–æ–‡ä»¶: " + USER_FILE_NAME + "...");
+			BufferedReader inputFromFile2 = new BufferedReader(new InputStreamReader(
+					new FileInputStream(USER_FILE_NAME), StandardCharsets.UTF_8));
 			while ((line = inputFromFile2.readLine()) != null) {
 
 				st = new StringTokenizer(line, ",");
@@ -116,26 +123,26 @@ public class ProductDataAccessor extends DataAccessor {
 			}
 
 			inputFromFile2.close();
-			log("ÎÄ¼ş¶ÁÈ¡½áÊø!");
-			log("×¼±¸¾ÍĞ÷!\n");
+			log("æ–‡ä»¶è¯»å–ç»“æŸ!");
+			log("å‡†å¤‡å°±ç»ª!\n");
 		} catch (FileNotFoundException exc) {
-			log("Ã»ÓĞÕÒµ½ÎÄ¼ş: " + PRODUCT_FILE_NAME + " »ò "+USER_FILE_NAME+".");
+			log("æ²¡æœ‰æ‰¾åˆ°æ–‡ä»¶: " + PRODUCT_FILE_NAME + " æˆ– "+USER_FILE_NAME+".");
 			log(exc);
 		} catch (IOException exc) {
-			log("¶ÁÈ¡ÎÄ¼ş·¢ÉúÒì³£: " + PRODUCT_FILE_NAME+ " »ò "+USER_FILE_NAME+".");
+			log("è¯»å–æ–‡ä»¶å‘ç”Ÿå¼‚å¸¸: " + PRODUCT_FILE_NAME+ " æˆ– "+USER_FILE_NAME+".");
 			log(exc);
 		}
 	}
 
 	/**
-	 * ·µ»Ø´øÓĞÕâĞ©²ÎÊıµÄÉÌÆ·¶ÔÏó
-	 * @param productName Ò©Æ·Ãû³Æ
-	 * @param cas »¯Ñ§ÎÄÕªµÇ¼ÇºÅ
-	 * @param structure ½á¹¹Í¼Ãû³Æ
-	 * @param formula ¹«Ê½
-	 * @param price ¼Û¸ñ
-	 * @param realstock ÊıÁ¿
-	 * @param category Àà±ğ
+	 * è¿”å›å¸¦æœ‰è¿™äº›å‚æ•°çš„å•†å“å¯¹è±¡
+	 * @param productName è¯å“åç§°
+	 * @param cas åŒ–å­¦æ–‡æ‘˜ç™»è®°å·
+	 * @param structure ç»“æ„å›¾åç§°
+	 * @param formula å…¬å¼
+	 * @param price ä»·æ ¼
+	 * @param realstock æ•°é‡
+	 * @param category ç±»åˆ«
 	 * @return new Product(productName, cas, structure, formula, price, realstock, category);
 	 */
 	private Product getProductObject(String productName, String cas,
@@ -144,16 +151,16 @@ public class ProductDataAccessor extends DataAccessor {
 	}
 
 	/**
-	 * ±£´æÊı¾İ
+	 * ä¿å­˜æ•°æ®
 	 */
 	@Override
 	public void save(User user) {
-		log("¶ÁÈ¡ÎÄ¼ş: " + USER_FILE_NAME + "...");
+		log("è¯»å–æ–‡ä»¶: " + USER_FILE_NAME + "...");
 		try {
 			String userinfo = user.getUsername() + "," + user.getPassword() + "," + user.getAuthority();
 			RandomAccessFile fos = new RandomAccessFile(USER_FILE_NAME, "rws");
 			fos.seek(fos.length());
-			fos.write(("\n" + userinfo).getBytes());
+			fos.write(("\n" + userinfo).getBytes(StandardCharsets.UTF_8));
 			fos.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -163,13 +170,16 @@ public class ProductDataAccessor extends DataAccessor {
 	}
 
 	/**
-	 * ÈÕÖ¾·½·¨.
+	 * æ—¥å¿—æ–¹æ³•.
 	 */
 	@Override
 	protected void log(Object msg) {
-		System.out.println("ProductDataAccessorÀà: " + msg);
+		System.out.println("ProductDataAccessorç±»: " + msg);
 	}
 
+	/**
+	 * è·å–ç”¨æˆ·ä¿¡æ¯æ˜ å°„ã€‚
+	 */
 	@Override
 	public HashMap<String,User> getUsers() {
 		this.load();

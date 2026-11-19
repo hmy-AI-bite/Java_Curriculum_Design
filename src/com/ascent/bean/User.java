@@ -1,7 +1,10 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°Userç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.bean;
 
 /**
- * ÊµÌåÀàUser£¬ÓÃÀ´ÃèÊöÓÃ»§µÄĞÅÏ¢Àà
+ * å®ä½“ç±»Userï¼Œç”¨æ¥æè¿°ç”¨æˆ·çš„ä¿¡æ¯ç±»
  * @author ascent
  * @version 1.0
  */
@@ -9,22 +12,22 @@ public class User implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String username; // ÓÃ»§Ãû
+	private String username; // ç”¨æˆ·å
 
-	private String password; // ÃÜÂë
+	private String password; // å¯†ç 
 
-	private int authority; // ÓÃ»§È¨ÏŞ
+	private int authority; // ç”¨æˆ·æƒé™
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public User() {
 	}
 
 	/**
-	 * ´øÁ½¸ö²ÎÊıµÄ¹¹Ôì·½·¨
-	 * @param username ÓÃ»§Ãû
-	 * @param password ÃÜÂë
+	 * å¸¦ä¸¤ä¸ªå‚æ•°çš„æ„é€ æ–¹æ³•
+	 * @param username ç”¨æˆ·å
+	 * @param password å¯†ç 
 	 */
 	public User(String username, String password) {
 		this.username = username;
@@ -32,10 +35,10 @@ public class User implements java.io.Serializable {
 	}
 
 	/**
-	 * ´øËùÓĞ²ÎÊı¹¹Ôì·½·¨
-	 * @param username ÓÃ»§Ãû
-	 * @param password ÃÜÂë
-	 * @param authority ÓÃ»§È¨ÏŞ
+	 * å¸¦æ‰€æœ‰å‚æ•°æ„é€ æ–¹æ³•
+	 * @param username ç”¨æˆ·å
+	 * @param password å¯†ç 
+	 * @param authority ç”¨æˆ·æƒé™
 	 */
 	public User(String username, String password, int authority) {
 		this.username = username;
@@ -85,6 +88,9 @@ public class User implements java.io.Serializable {
 		this.username = username;
 	}
 
+	/**
+	 * å®ç°toStringåŠŸèƒ½ã€‚
+	 */
 	@Override
 	public String toString() {
 		return this.getUsername() + "  " + this.getPassword();

@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°DataAccessorç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.util.*;
@@ -5,30 +8,30 @@ import com.ascent.bean.Product;
 import com.ascent.bean.User;
 
 /**
- * Õâ¸ö³éÏóÀà¶¨ÒåÁËÈçºÎ¶ÁÈ¡Ò»¸öÊı¾İÎÄ¼ş¡£ 
- * ËüÌá¹©µÄ·½·¨¿ÉÒÔÓÃÀ´»ñµÃ²úÆ·µÄ·ÖÀàºÍ¾ßÌåµÄ²úÆ·ĞÅÏ¢
+ * è¿™ä¸ªæŠ½è±¡ç±»å®šä¹‰äº†å¦‚ä½•è¯»å–ä¸€ä¸ªæ•°æ®æ–‡ä»¶ã€‚
+ * å®ƒæä¾›çš„æ–¹æ³•å¯ä»¥ç”¨æ¥è·å¾—äº§å“çš„åˆ†ç±»å’Œå…·ä½“çš„äº§å“ä¿¡æ¯
  * @author ascent
  * @version 1.0
  */
 public abstract class DataAccessor {
 
 	/**
-	 * ´æ·Å²úÆ·ĞÅÏ¢µÄHashMap/Hashtable .
+	 * å­˜æ”¾äº§å“ä¿¡æ¯çš„HashMap/Hashtable .
 	 */
 	protected HashMap<String,ArrayList<Product>> dataTable;
 
 	/**
-	 * ´æ·ÅÓÃ»§ĞÅÏ¢µÄHashMap/Hashtable .
+	 * å­˜æ”¾ç”¨æˆ·ä¿¡æ¯çš„HashMap/Hashtable .
 	 */
 	protected HashMap<String,User> userTable;
 
 	/**
-	 * ×î½üÔö¼ÓµÄ²úÆ·
+	 * æœ€è¿‘å¢åŠ çš„äº§å“
 	 */
 	protected ArrayList<Product> recentProductList;
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public DataAccessor() {
 		dataTable = new HashMap<String,ArrayList<Product>>();
@@ -37,70 +40,70 @@ public abstract class DataAccessor {
 	}
 
 	/**
-	 * »ñµÃ²úÆ··ÖÀàÃû³Æ¼¯ºÏ
-	 * @return categorySet ²úÆ··ÖÀàÃû³Æ¼¯ºÏ
+	 * è·å¾—äº§å“åˆ†ç±»åç§°é›†åˆ
+	 * @return categorySet äº§å“åˆ†ç±»åç§°é›†åˆ
 	 */
 	public ArrayList<String> getCategories() {
 		Set<String> categorySet = dataTable.keySet();
-		log("»ñµÃ·ÖÀà...");
+		log("è·å¾—åˆ†ç±»...");
 		ArrayList<String> categories = new ArrayList<String>(categorySet);
-		// ÅÅĞò
+		// æ’åº
 		Collections.sort(categories);
-		log("Íê³É»ñµÃ·ÖÀà!\n");
+		log("å®Œæˆè·å¾—åˆ†ç±»!\n");
 		return categories;
 	}
 
 	/**
-	 * »ñµÃÄ³Àà²úÆ·µÄ¼¯ºÏ
-	 * @param category ·ÖÀàÃû³Æ
-	 * @return productList ÉÌÆ·¼¯ºÏ
+	 * è·å¾—æŸç±»äº§å“çš„é›†åˆ
+	 * @param category åˆ†ç±»åç§°
+	 * @return productList å•†å“é›†åˆ
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<Product> getProducts(String category) {
-		log("»ñµÃ²úÆ·¼¯ºÏĞÅÏ¢£¬ ËüÃÇÊôÓÚ: " + category);
+		log("è·å¾—äº§å“é›†åˆä¿¡æ¯ï¼Œ å®ƒä»¬å±äº: " + category);
 		ArrayList<Product> productList = dataTable.get(category);
-		log("¸ÃÀà²úÆ·ÊıÁ¿£º" + productList.size());
-		// ÅÅĞò
+		log("è¯¥ç±»äº§å“æ•°é‡ï¼š" + productList.size());
+		// æ’åº
 		Collections.sort(productList);
-		log("Íê³É»ñµÃ²úÆ·¼¯ºÏĞÅÏ¢!\n");
+		log("å®Œæˆè·å¾—äº§å“é›†åˆä¿¡æ¯!\n");
 		return productList;
 	}
 
 	/**
-	 * »ñÈ¡ÓÃ»§
-	 * @return userTable Key:ÓÃ»§Ãû£¬Value:ÓÃ»§¶ÔÏó
+	 * è·å–ç”¨æˆ·
+	 * @return userTable Key:ç”¨æˆ·åï¼ŒValue:ç”¨æˆ·å¯¹è±¡
 	 */
 	public HashMap<String,User> getUsers() {
 		return this.userTable;
 	}
 
 	/**
-	 * Ôö¼ÓĞÂµÄ²úÆ·
-	 * @param theProduct ±»Ìí¼Óµ½¹ºÎï³µµÄÉÌÆ·
+	 * å¢åŠ æ–°çš„äº§å“
+	 * @param theProduct è¢«æ·»åŠ åˆ°è´­ç‰©è½¦çš„å•†å“
 	 */
 	public void addProduct(Product theProduct) {
 		String category = theProduct.getCategory();
-		log("Ìí¼ÓĞÂµÄ²úÆ·:  " + theProduct);
+		log("æ·»åŠ æ–°çš„äº§å“:  " + theProduct);
 		ArrayList<Product> productList = dataTable.get(category);
 		productList.add(theProduct);
 		recentProductList.add(theProduct);
-		log("Íê³ÉÌí¼ÓĞÂµÄ²úÆ·!\n");
+		log("å®Œæˆæ·»åŠ æ–°çš„äº§å“!\n");
 	}
 
 	/**
-	 * ´ÓÎÄ¼şÖĞ¶ÁÈ¡Êı¾İ
+	 * ä»æ–‡ä»¶ä¸­è¯»å–æ•°æ®
 	 */
 	public abstract void load();
 
 	/**
-	 * ÏòÎÄ¼şÖĞ±£´æÊı¾İ
+	 * å‘æ–‡ä»¶ä¸­ä¿å­˜æ•°æ®
 	 */
 	public abstract void save(User user);
 
 	/**
-	 * ÈÕÖ¾·½·¨
+	 * æ—¥å¿—æ–¹æ³•
 	 */
 	protected void log(Object msg) {
-		System.out.println("Êı¾İ´æÈ¡Àà¡¡Data Accessor:  " + msg);
+		System.out.println("æ•°æ®å­˜å–ç±»ã€€Data Accessor:  " + msg);
 	}
 }

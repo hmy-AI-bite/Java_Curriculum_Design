@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ProductPanelç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.ui;
 
 import javax.swing.*;
@@ -13,7 +16,7 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Õâ¸öÀà¹¹½¨²úÆ·Ãæ°å
+ * è¿™ä¸ªç±»æ„å»ºäº§å“é¢æ¿
  * @author ascent
  * @version 1.0
  */
@@ -47,14 +50,14 @@ public class ProductPanel extends JPanel {
 	protected ProductDataClient myDataClient;
 
 	/**
-	 * ¹¹½¨²úÆ·Ãæ°åµÄ¹¹Ôì·½·¨
-	 * @param theParentFrame Ãæ°åµÄ¸¸´°Ìå
+	 * æ„å»ºäº§å“é¢æ¿çš„æ„é€ æ–¹æ³•
+	 * @param theParentFrame é¢æ¿çš„çˆ¶çª—ä½“
 	 */
 	public ProductPanel(MainFrame theParentFrame) {
 		try {
 			parentFrame = theParentFrame;
 			myDataClient = new ProductDataClient();
-			selectionLabel = new JLabel("Ñ¡ÔñÀà±ğ");
+			selectionLabel = new JLabel("é€‰æ‹©ç±»åˆ«");
 			categoryComboBox = new JComboBox();
 			categoryComboBox.addItem("-------");
 
@@ -73,10 +76,10 @@ public class ProductPanel extends JPanel {
 			productListBox.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			productScrollPane = new JScrollPane(productListBox);
 
-			detailsButton = new JButton("ÏêÏ¸...");
-			clearButton = new JButton("Çå¿Õ");
-			exitButton = new JButton("ÍË³ö");
-			shoppingButton = new JButton("²é¿´¹ºÎï³µ");
+			detailsButton = new JButton("è¯¦ç»†...");
+			clearButton = new JButton("æ¸…ç©º");
+			exitButton = new JButton("é€€å‡º");
+			shoppingButton = new JButton("æŸ¥çœ‹è´­ç‰©è½¦");
 
 			bottomPanel = new JPanel();
 
@@ -109,13 +112,13 @@ public class ProductPanel extends JPanel {
 			shoppingButton.setEnabled(false);
 
 		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "ÍøÂçÎÊÌâ " + exc, "ÍøÂçÎÊÌâ", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "ç½‘ç»œé—®é¢˜ " + exc, "ç½‘ç»œé—®é¢˜", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 	}
 
 	/**
-	 * ÉèÖÃÏÂÀ­ÁĞÑ¡ÖĞµÄ·ÖÀàÑ¡Ïî
+	 * è®¾ç½®ä¸‹æ‹‰åˆ—é€‰ä¸­çš„åˆ†ç±»é€‰é¡¹
 	 */
 	protected void populateListBox() {
 		try {
@@ -138,16 +141,19 @@ public class ProductPanel extends JPanel {
 				clearButton.setEnabled(false);
 			}
 		} catch (IOException exc) {
-			JOptionPane.showMessageDialog(this, "ÍøÂçÎÊÌâ: " + exc, "ÍøÂçÎÊÌâ", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "ç½‘ç»œé—®é¢˜: " + exc, "ç½‘ç»œé—®é¢˜", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		} 
 	}
 
 	/**
-	 * ´¦ÀíÑ¡ÔñÏêÏ¸...°´Å¥Ê±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰æ‹©è¯¦ç»†...æŒ‰é’®æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class DetailsActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			int index = productListBox.getSelectedIndex();
 			Product product = (Product) productArrayList.get(index);
@@ -157,10 +163,13 @@ public class ProductPanel extends JPanel {
 	}
 
 	/**
-	 * ´¦ÀíÑ¡Ôñ²é¿´¹ºÎï³µ°´Å¥Ê±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰æ‹©æŸ¥çœ‹è´­ç‰©è½¦æŒ‰é’®æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class ShoppingActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			ShoppingCartDialog myShoppingDialog = new ShoppingCartDialog(
 					parentFrame, shoppingButton);
@@ -169,20 +178,26 @@ public class ProductPanel extends JPanel {
 	}
 
 	/**
-	 * ´¦ÀíÑ¡ÔñÍË³ö°´Å¥Ê±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰æ‹©é€€å‡ºæŒ‰é’®æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class ExitActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			parentFrame.exit();
 		}
 	}
 
 	/**
-	 * ´¦ÀíÑ¡ÔñÇå¿Õ°´Å¥Ê±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰æ‹©æ¸…ç©ºæŒ‰é’®æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class ClearActionListener implements ActionListener {
+		/**
+		 * å¤„ç†å¯¹åº”ç»„ä»¶çš„æ“ä½œäº‹ä»¶ã€‚
+		 */
 		public void actionPerformed(ActionEvent event) {
 			Object[] noData = new Object[1];
 			productListBox.setListData(noData);
@@ -191,10 +206,13 @@ public class ProductPanel extends JPanel {
 	}
 
 	/**
-	 * ´¦ÀíÑ¡ÖĞ·ÖÀàÏÂÀ­ÁĞÑ¡µÄÑ¡ÏîÊ±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰ä¸­åˆ†ç±»ä¸‹æ‹‰åˆ—é€‰çš„é€‰é¡¹æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class GoItemListener implements ItemListener {
+		/**
+		 * å¤„ç†é€‰é¡¹çŠ¶æ€å˜åŒ–äº‹ä»¶ã€‚
+		 */
 		public void itemStateChanged(ItemEvent event) {
 			if (event.getStateChange() == ItemEvent.SELECTED) {
 				populateListBox();
@@ -203,10 +221,13 @@ public class ProductPanel extends JPanel {
 	}
 
 	/**
-	 * ´¦ÀíÑ¡ÖĞ·ÖÀàÁĞ±íÖĞÑ¡ÏîÊ±´¥·¢µÄÊÂ¼ş¼àÌıÆ÷
+	 * å¤„ç†é€‰ä¸­åˆ†ç±»åˆ—è¡¨ä¸­é€‰é¡¹æ—¶è§¦å‘çš„äº‹ä»¶ç›‘å¬å™¨
 	 * @author ascent
 	 */
 	class ProductListSelectionListener implements ListSelectionListener {
+		/**
+		 * å¤„ç†åˆ—è¡¨é€‰æ‹©å˜åŒ–äº‹ä»¶ã€‚
+		 */
 		public void valueChanged(ListSelectionEvent event) {
 			if (productListBox.isSelectionEmpty()) {
 				detailsButton.setEnabled(false);

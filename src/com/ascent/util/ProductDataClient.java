@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ProductDataClientç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.io.*;
@@ -6,50 +9,50 @@ import java.util.*;
 import com.ascent.bean.Product;
 
 /**
- * Õâ¸öÀàÁ¬½ÓÊı¾İ·şÎñÆ÷À´»ñµÃÊı¾İ
+ * è¿™ä¸ªç±»è¿æ¥æ•°æ®æœåŠ¡å™¨æ¥è·å¾—æ•°æ®
  * @author ascent
  * @version 1.0
  */
 public class ProductDataClient implements ProtocolPort {
 
 	/**
-	 * socketÒıÓÃ
+	 * socketå¼•ç”¨
 	 */
 	protected Socket hostSocket;
 
 	/**
-	 * Êä³öÁ÷µÄÒıÓÃ
+	 * è¾“å‡ºæµçš„å¼•ç”¨
 	 */
 	protected ObjectOutputStream outputToServer;
 
 	/**
-	 * ÊäÈëÁ÷µÄÒıÓÃ
+	 * è¾“å…¥æµçš„å¼•ç”¨
 	 */
 	protected ObjectInputStream inputFromServer;
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public ProductDataClient() throws IOException {
 		this(ProtocolPort.DEFAULT_HOST, ProtocolPort.DEFAULT_PORT);
 	}
 
 	/**
-	 * ½ÓÊÜÖ÷»úÃûºÍ¶Ë¿ÚºÅµÄ¹¹Ôì·½·¨
+	 * æ¥å—ä¸»æœºåå’Œç«¯å£å·çš„æ„é€ æ–¹æ³•
 	 */
 	public ProductDataClient(String hostName, int port) throws IOException {
 
-		log("Á¬½ÓÊı¾İ·şÎñÆ÷..." + hostName + ":" + port);
+		log("è¿æ¥æ•°æ®æœåŠ¡å™¨..." + hostName + ":" + port);
 
 		hostSocket = new Socket(hostName, port);
 		outputToServer = new ObjectOutputStream(hostSocket.getOutputStream());
 		inputFromServer = new ObjectInputStream(hostSocket.getInputStream());
 
-		log("Á¬½Ó³É¹¦.");
+		log("è¿æ¥æˆåŠŸ.");
 	}
 
 	/**
-	 * ·µ»ØÀà±ğ¼¯ºÏ
+	 * è¿”å›ç±»åˆ«é›†åˆ
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<String> getCategories() throws IOException {
@@ -57,23 +60,23 @@ public class ProductDataClient implements ProtocolPort {
 		ArrayList<String> categoryList = null;
 
 		try {
-			log("·¢ËÍÇëÇó: OP_GET_PRODUCT_CATEGORIES");
+			log("å‘é€è¯·æ±‚: OP_GET_PRODUCT_CATEGORIES");
 			outputToServer.writeInt(ProtocolPort.OP_GET_PRODUCT_CATEGORIES);
 			outputToServer.flush();
 
-			log("½ÓÊÕÊı¾İ...");
+			log("æ¥æ”¶æ•°æ®...");
 			categoryList = (ArrayList<String>) inputFromServer.readObject();
-			log("ÊÕµ½ " + categoryList.size() + " Àà±ğ.");
+			log("æ”¶åˆ° " + categoryList.size() + " ç±»åˆ«.");
 		} catch (ClassNotFoundException exc) {
-			log("=====>>>  Òì³£: " + exc);
-			throw new IOException("ÕÒ²»µ½Ïà¹ØÀà");
+			log("=====>>>  å¼‚å¸¸: " + exc);
+			throw new IOException("æ‰¾ä¸åˆ°ç›¸å…³ç±»");
 		}
 
 		return categoryList;
 	}
 
 	/**
-	 * ·µ»Ø²úÆ·¼¯ºÏ
+	 * è¿”å›äº§å“é›†åˆ
 	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<Product> getProducts(String category) throws IOException {
@@ -81,26 +84,26 @@ public class ProductDataClient implements ProtocolPort {
 		ArrayList<Product> productList = null;
 
 		try {
-			log("·¢ËÍÇëÇó: OP_GET_PRODUCTS  Àà±ğ = " + category);
+			log("å‘é€è¯·æ±‚: OP_GET_PRODUCTS  ç±»åˆ« = " + category);
 			outputToServer.writeInt(ProtocolPort.OP_GET_PRODUCTS);
 			outputToServer.writeObject(category);
 			outputToServer.flush();
 
-			log("½ÓÊÕÊı¾İ...");
+			log("æ¥æ”¶æ•°æ®...");
 			productList = (ArrayList<Product>)inputFromServer.readObject();
-			log("ÊÕµ½ " + productList.size() + " ²úÆ·.");
+			log("æ”¶åˆ° " + productList.size() + " äº§å“.");
 		} catch (ClassNotFoundException exc) {
-			log("=====>>>  Òì³£: " + exc);
-			throw new IOException("ÕÒ²»µ½Ïà¹ØÀà");
+			log("=====>>>  å¼‚å¸¸: " + exc);
+			throw new IOException("æ‰¾ä¸åˆ°ç›¸å…³ç±»");
 		}
 
 		return productList;
 	}
 
 	/**
-	 * ÈÕÖ¾·½·¨.
+	 * æ—¥å¿—æ–¹æ³•.
 	 */
 	protected void log(Object msg) {
-		System.out.println("ProductDataClientÀà: " + msg);
+		System.out.println("ProductDataClientç±»: " + msg);
 	}
 }

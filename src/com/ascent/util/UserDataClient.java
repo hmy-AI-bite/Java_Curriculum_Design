@@ -1,3 +1,6 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°UserDataClientç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.io.IOException;
@@ -8,52 +11,52 @@ import java.util.HashMap;
 import com.ascent.bean.User;
 
 /**
- * Õâ¸öÀàÁ¬½ÓÊı¾İ·şÎñÆ÷À´»ñµÃÊı¾İ
+ * è¿™ä¸ªç±»è¿æ¥æ•°æ®æœåŠ¡å™¨æ¥è·å¾—æ•°æ®
  * @author ascent
  * @version 1.0
  */
 public class UserDataClient implements ProtocolPort {
 
 	/**
-	 * socketÒıÓÃ
+	 * socketå¼•ç”¨
 	 */
 	protected Socket hostSocket;
 
 	/**
-	 * Êä³öÁ÷µÄÒıÓÃ
+	 * è¾“å‡ºæµçš„å¼•ç”¨
 	 */
 	protected ObjectOutputStream outputToServer;
 
 	/**
-	 * ÊäÈëÁ÷µÄÒıÓÃ
+	 * è¾“å…¥æµçš„å¼•ç”¨
 	 */
 	protected ObjectInputStream inputFromServer;
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public UserDataClient() throws IOException {
 		this(ProtocolPort.DEFAULT_HOST, ProtocolPort.DEFAULT_PORT);
 	}
 
 	/**
-	 * ½ÓÊÜÖ÷»úÃûºÍ¶Ë¿ÚºÅµÄ¹¹Ôì·½·¨
+	 * æ¥å—ä¸»æœºåå’Œç«¯å£å·çš„æ„é€ æ–¹æ³•
 	 */
 	public UserDataClient(String hostName, int port) throws IOException {
 
-		log("Á¬½ÓÊı¾İ·şÎñÆ÷..." + hostName + ":" + port);
+		log("è¿æ¥æ•°æ®æœåŠ¡å™¨..." + hostName + ":" + port);
 		try {
 			hostSocket = new Socket(hostName, port);
 			outputToServer = new ObjectOutputStream(hostSocket.getOutputStream());
 			inputFromServer = new ObjectInputStream(hostSocket.getInputStream());
-			log("Á¬½Ó³É¹¦.");
+			log("è¿æ¥æˆåŠŸ.");
 		} catch (Exception e) {
-			log("Á¬½ÓÊ§°Ü.");
+			log("è¿æ¥å¤±è´¥.");
 		}
 	}
 
 	/**
-	 * ·µ»ØÓÃ»§
+	 * è¿”å›ç”¨æˆ·
 	 * @return userTable 
 	 */
 	@SuppressWarnings("unchecked")
@@ -61,12 +64,12 @@ public class UserDataClient implements ProtocolPort {
 		HashMap<String,User> userTable = null;
 
 		try {
-			log("·¢ËÍÇëÇó: OP_GET_USERS  ");
+			log("å‘é€è¯·æ±‚: OP_GET_USERS  ");
 
 			outputToServer.writeInt(ProtocolPort.OP_GET_USERS);
 			outputToServer.flush();
 
-			log("½ÓÊÕÊı¾İ...");
+			log("æ¥æ”¶æ•°æ®...");
 			userTable = (HashMap<String,User>) inputFromServer.readObject();
 
 		} catch (ClassNotFoundException e) {
@@ -80,7 +83,7 @@ public class UserDataClient implements ProtocolPort {
 	}
 
 	/**
-	 * ¹Ø±Õµ±Ç°SocKet
+	 * å…³é—­å½“å‰SocKet
 	 */
 	public void closeSocKet() {
 		try {
@@ -91,18 +94,18 @@ public class UserDataClient implements ProtocolPort {
 	}
 
 	/**
-	 * ÈÕÖ¾·½·¨.
-	 * @param msg ´òÓ¡µÄÈÕÖ¾ĞÅÏ¢
+	 * æ—¥å¿—æ–¹æ³•.
+	 * @param msg æ‰“å°çš„æ—¥å¿—ä¿¡æ¯
 	 */
 	protected void log(Object msg) {
-		System.out.println("UserDataClientÀà: " + msg);
+		System.out.println("UserDataClientç±»: " + msg);
 	}
 
 	/**
-	 * ×¢²áÓÃ»§
-	 * @param username ÓÃ»§Ãû
-	 * @param password ÃÜÂë
-	 * @return boolean true:×¢²á³É¹¦£¬false:×¢²áÊ§°Ü
+	 * æ³¨å†Œç”¨æˆ·
+	 * @param username ç”¨æˆ·å
+	 * @param password å¯†ç 
+	 * @return boolean true:æ³¨å†ŒæˆåŠŸï¼Œfalse:æ³¨å†Œå¤±è´¥
 	 */
 	public boolean addUser(String username, String password) {
 		HashMap<String,User> map = this.getUsers();
@@ -110,11 +113,11 @@ public class UserDataClient implements ProtocolPort {
 			return false;
 		} else {
 			try {
-				log("·¢ËÍÇëÇó: OP_ADD_USERS  ");
+				log("å‘é€è¯·æ±‚: OP_ADD_USERS  ");
 				outputToServer.writeInt(ProtocolPort.OP_ADD_USERS);
 				outputToServer.writeObject(new User(username, password, 0));
 				outputToServer.flush();
-				log("½ÓÊÕÊı¾İ...");
+				log("æ¥æ”¶æ•°æ®...");
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();

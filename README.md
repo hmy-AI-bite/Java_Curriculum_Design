@@ -1,16 +1,19 @@
 # AscentSys 药品销售管理系统（Java 课程设计）
 
-基于 **Java SE 11 + Swing** 的 C/S 桌面应用。客户端负责登录、注册、商品浏览、商品详情和购物车；服务端通过 **TCP 5150** 提供数据。项目不依赖数据库，商品和用户数据保存在两个 GBK 编码的文本文件中。
+基于 **Java SE 11 + Swing** 的 C/S 桌面应用。客户端负责登录、注册、商品浏览、商品详情和购物车；服务端通过 **TCP 5150** 提供数据。旧版客户端不依赖数据库，商品和用户数据保存在两个 **UTF-8** 编码的文本文件中。
 
 仓库名：`Java_Curriculum_Design`　项目名：`AscentSys`
+
+> W1 后端框架（Maven + SQLite + JUnit）见 [docs/backend-w1.md](docs/backend-w1.md)；下面“启动方式”仍指旧版 Swing 文本数据版本。
 
 ## 技术栈
 
 - Java SE 11（源码/字节码目标 11）
 - Swing / AWT 桌面界面
 - Socket + `ObjectInputStream` / `ObjectOutputStream`（Java 对象序列化）
-- 逗号分隔文本文件（CSV 风格）作为数据源
-- Eclipse / IntelliJ IDEA 工程
+- 逗号分隔文本文件（CSV 风格）作为旧版数据源
+- 全项目统一 UTF-8 编码
+- Eclipse / IntelliJ IDEA 工程；W1 后端另有 Maven 构建
 
 ## 项目结构
 
@@ -25,11 +28,15 @@ AscentSys/
 │  │                         ProductDataClient、UserDataClient、
 │  │                         DataAccessor、ProductDataAccessor、ShoppingCart
 │  └─ images/ss.jpg          商品结构图
-├─ product.db                商品数据（7 列，GBK）
+├─ product.db                商品数据（7 列，UTF-8）
 ├─ user.db                   用户数据（3 列）
 ├─ .project/.classpath       Eclipse 工程配置
 ├─ .settings/                Eclipse 编译设置（Java 11）
 ├─ bin/                      编译输出（.gitignore 忽略）
+├─ pom.xml                   W1 后端 Maven 构建
+├─ db/schema.sql             W1 SQLite 建表脚本
+├─ test/                     W1 JUnit 测试
+├─ docs/backend-w1.md        W1 后端说明
 └─ README.md
 ```
 
@@ -40,12 +47,12 @@ AscentSys/
 | JDK | 11 及以上（已在 JDK 21 / 25 验证） |
 | 图形环境 | 支持 Swing 的桌面会话 |
 | 网络 | 本机 5150 端口可用 |
-| 第三方依赖 | 无，不需要 Maven/Gradle |
+| 第三方依赖 | 旧版无第三方依赖；W1 后端使用 Maven（sqlite-jdbc / JUnit） |
 | 数据文件 | 项目根目录下的 `product.db`、`user.db` |
 
 ## 启动方式
 
-> 源码和 `product.db` 都是 **GBK** 编码。编译必须加 `-encoding GBK`，运行必须加 `-Dfile.encoding=GBK`，否则会编译失败或中文乱码。
+> 项目统一使用 **UTF-8** 编码。编译时显式加 `-encoding UTF-8`；读取 `product.db`/`user.db` 的代码已显式指定 `StandardCharsets.UTF_8`，运行不需要额外指定编码参数。
 
 ### 1. 获取代码
 
@@ -59,8 +66,9 @@ cd Java_Curriculum_Design
 Windows PowerShell：
 
 ```powershell
-$files = Get-ChildItem -Recurse src -Filter *.java | ForEach-Object FullName
-javac -encoding GBK --release 11 -d bin $files
+# 旧版 Swing 客户端：只编译 bean/ui/util 三个包
+$files = Get-ChildItem src\com\ascent\bean,src\com\ascent\ui,src\com\ascent\util -Recurse -Filter *.java | ForEach-Object FullName
+javac -encoding UTF-8 --release 11 -d bin $files
 New-Item -ItemType Directory -Force bin\images | Out-Null
 Copy-Item src\images\* bin\images -Force
 ```
@@ -68,25 +76,28 @@ Copy-Item src\images\* bin\images -Force
 macOS / Linux：
 
 ```bash
+# 旧版 Swing 客户端：只编译 bean/ui/util 三个包
 mkdir -p bin/images
-find src -name '*.java' -print > sources.txt
-javac -encoding GBK --release 11 -d bin @sources.txt
+find src/com/ascent/bean src/com/ascent/ui src/com/ascent/util -name '*.java' -print > sources.txt
+javac -encoding UTF-8 --release 11 -d bin @sources.txt
 cp -r src/images/. bin/images/
 rm sources.txt
 ```
+
+> 以上命令只编译旧版客户端；W1 后端（含 SQLite/JUnit）请用 Maven，见 [docs/backend-w1.md](docs/backend-w1.md)。
 
 ### 3. 启动（两个终端）
 
 先启动服务端：
 
 ```bash
-java "-Dfile.encoding=GBK" -cp bin com.ascent.util.ProductDataServer
+java -cp bin com.ascent.util.ProductDataServer
 ```
 
 看到 `服务器准备就绪!` 后，再启动客户端：
 
 ```bash
-java "-Dfile.encoding=GBK" -cp bin com.ascent.ui.Ascentsys
+java -cp bin com.ascent.ui.Ascentsys
 ```
 
 > 工作目录必须是项目根目录，`product.db` 和 `user.db` 是按相对路径读取的。
@@ -101,21 +112,21 @@ java "-Dfile.encoding=GBK" -cp bin com.ascent.ui.Ascentsys
 **IntelliJ IDEA**
 
 1. `Open` 项目根目录，Project SDK 选择 JDK 11+，Language level 选 11。
-2. `Settings → Editor → File Encodings`，把 Project Encoding 设为 `GBK`。
+2. `Settings → Editor → File Encodings`，把 Project Encoding 设为 `UTF-8`。
 3. 建两个 Application 运行配置：
    - 服务端：`com.ascent.util.ProductDataServer`
    - 客户端：`com.ascent.ui.Ascentsys`
-4. 两个配置的 VM options 都加 `-Dfile.encoding=GBK`，Working directory 设为项目根目录。
+4. 两个配置的 Working directory 设为项目根目录。
 
 **Eclipse**
 
 1. `File → Import → Existing Projects into Workspace` 导入项目。
-2. `Window → Preferences → General → Workspace → Text file encoding` 选择 `Other: GBK`。
-3. 编译级别设为 Java 11，运行配置的 VM arguments 加 `-Dfile.encoding=GBK`。
+2. `Window → Preferences → General → Workspace → Text file encoding` 选择 `Other: UTF-8`。
+3. 编译级别设为 Java 11。
 
 ## 数据文件
 
-两个文件都是无表头的逗号分隔文本，**GBK 编码**：
+两个文件都是无表头的逗号分隔文本，**UTF-8 编码**：
 
 | 文件 | 每行格式 | 说明 |
 |---|---|---|
@@ -158,8 +169,7 @@ java "-Dfile.encoding=GBK" -cp bin com.ascent.ui.Ascentsys
 - [ ] **菜单功能**：“打开”“保存”菜单没有绑定事件
 - [ ] **价格**：`Product.price` 已解析，但详情、购物车和结算都未使用
 - [ ] **网络健壮性**：无断线重连、服务端无优雅关闭、异常提示不完整
-- [ ] **编码统一**：源码和 `product.db` 为 GBK，跨平台前建议统一为 UTF-8
-- [ ] **工程化**：无 Maven/Gradle、无单元测试、无日志框架
+- [ ] **工程化**：旧客户端仍是无 Maven 的 Eclipse 工程；W1 后端已单独引入 Maven 与 JUnit（见 [docs/backend-w1.md](docs/backend-w1.md)），前端尚未迁移
 
 ## 已知问题
 

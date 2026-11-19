@@ -1,10 +1,13 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ProductDataServerç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.io.*;
 import java.net.*;
 
 /**
- * Êı¾İ·şÎñÆ÷Àà
+ * æ•°æ®æœåŠ¡å™¨ç±»
  * @author ascent
  * @version 1.0
  */
@@ -17,25 +20,25 @@ public class ProductDataServer implements ProtocolPort {
 	protected boolean done;
 
 	/**
-	 * Ä¬ÈÏ¹¹Ôì·½·¨
+	 * é»˜è®¤æ„é€ æ–¹æ³•
 	 */
 	public ProductDataServer() {
 		this(ProtocolPort.DEFAULT_PORT);
 	}
 
 	/**
-	 * ´øÒ»¸ö²ÎÊı¹¹Ôì·½·¨
-	 * @param thePort ·şÎñÆ÷¶Ë¶Ë¿ÚºÅ
+	 * å¸¦ä¸€ä¸ªå‚æ•°æ„é€ æ–¹æ³•
+	 * @param thePort æœåŠ¡å™¨ç«¯ç«¯å£å·
 	 */
 	public ProductDataServer(int thePort) {
 
 		try {
 			done = false;
-			log("Æô¶¯·şÎñÆ÷ " + thePort);
+			log("å¯åŠ¨æœåŠ¡å™¨ " + thePort);
 			myServerSocket = new ServerSocket(thePort);
 			myProductDataAccessor = new ProductDataAccessor();
 
-			log("\n·şÎñÆ÷×¼±¸¾ÍĞ÷!");
+			log("\næœåŠ¡å™¨å‡†å¤‡å°±ç»ª!");
 			listenForConnections();
 		} catch (IOException exc) {
 			log(exc);
@@ -44,7 +47,7 @@ public class ProductDataServer implements ProtocolPort {
 	}
 
 	/**
-	 * ¼àÌı¿Í»§¶Ë·¢ËÍÇëÇóÁ¬½Ó
+	 * ç›‘å¬å®¢æˆ·ç«¯å‘é€è¯·æ±‚è¿æ¥
 	 */
 	protected void listenForConnections() {
 		Socket clientSocket = null;
@@ -52,31 +55,31 @@ public class ProductDataServer implements ProtocolPort {
 
 		try {
 			while (!done) {
-				log("\nµÈ´ıÇëÇó...");
+				log("\nç­‰å¾…è¯·æ±‚...");
 				clientSocket = myServerSocket.accept();
 
 				String clientHostName = clientSocket.getInetAddress().getHostName();
 
-				log("ÊÕµ½Á¬½Ó: " + clientHostName);
+				log("æ”¶åˆ°è¿æ¥: " + clientHostName);
 				aHandler = new Handler(clientSocket, myProductDataAccessor);
 				aHandler.start();
 			}
 		} catch (IOException exc) {
-			log("listenForConnections()ÖĞ·¢ÉúÒì³£:  " + exc);
+			log("listenForConnections()ä¸­å‘ç”Ÿå¼‚å¸¸:  " + exc);
 		}
 	}
 
 	/**
-	 * ÈÕÖ¾·½·¨
-	 * @param msg ´òÓ¡ÈÕÖ¾µÄÏûÏ¢
+	 * æ—¥å¿—æ–¹æ³•
+	 * @param msg æ‰“å°æ—¥å¿—çš„æ¶ˆæ¯
 	 */
 	protected void log(Object msg) {
-		System.out.println("ProductDataServerÀà: " + msg);
+		System.out.println("ProductDataServerç±»: " + msg);
 	}
 
 	/**
-	 * Ö÷·½·¨£¬ Æô¶¯·şÎñÆ÷¶Ë
-	 * @param args ÎŞ
+	 * ä¸»æ–¹æ³•ï¼Œ å¯åŠ¨æœåŠ¡å™¨ç«¯
+	 * @param args æ— 
 	 */
 	public static void main(String[] args) {
 

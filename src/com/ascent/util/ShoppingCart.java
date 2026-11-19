@@ -1,22 +1,25 @@
+/**
+ * åŠŸèƒ½ç®€ä»‹ï¼šå®ç°ShoppingCartç±»çš„ç›¸å…³ä¸šåŠ¡åŠŸèƒ½ã€‚
+ */
 package com.ascent.util;
 
 import java.util.ArrayList;
 import com.ascent.bean.Product;
 
 /**
- * ¹ºÎï³µ
+ * è´­ç‰©è½¦
  * @author ascent
  * @version 1.0
  */
 public class ShoppingCart {
 
 	/**
-	 * ´æ·Å¹ºÂòÉÌÆ·ĞÅÏ¢
+	 * å­˜æ”¾è´­ä¹°å•†å“ä¿¡æ¯
 	 */
 	private static ArrayList<Product> shoppingList = new ArrayList<Product>();
 
 	/**
-	 * »ñÈ¡ËùÓĞ¹ºÂòÉÌÆ·ĞÅÏ¢
+	 * è·å–æ‰€æœ‰è´­ä¹°å•†å“ä¿¡æ¯
 	 * @return shoppingList
 	 */
 	public ArrayList<Product> getShoppingList() {
@@ -24,7 +27,7 @@ public class ShoppingCart {
 	}
 
 	/**
-	 * Ìí¼ÓÉÌÆ·µ½¹ºÎï³µ
+	 * æ·»åŠ å•†å“åˆ°è´­ç‰©è½¦
 	 * @param myProduct
 	 */
 	public void addProduct(Product myProduct) {
@@ -43,7 +46,7 @@ public class ShoppingCart {
 	}
 
 	/**
-	 * Çå¿Õ¹ºÎï³µËù¹ºÂòÉÌÆ·
+	 * æ¸…ç©ºè´­ç‰©è½¦æ‰€è´­ä¹°å•†å“
 	 */
 	public void clearProduct() {
 		shoppingList.clear();
