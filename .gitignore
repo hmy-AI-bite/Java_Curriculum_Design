@@ -1,0 +1,39 @@
+# Java 编译产物
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+
+# 构建输出
+bin/
+out/
+build/
+target/
+classes/
+
+# Eclipse（保留 .project、.classpath、.settings 以便导入）
+.metadata/
+*.launch
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# 操作系统
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 日志与临时文件
+*.log
+sources.txt
+
+# 注意：product.db / user.db 是项目数据文件，不能忽略
+# 注意：src/images/ 是商品结构图资源，不能忽略
