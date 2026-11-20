@@ -1,182 +1,203 @@
-/**
- * 功能简介：实现ProductDetailsDialog类的相关业务功能。
- */
 package com.ascent.ui;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.RoundingMode;
+import java.net.URL;
 
-import com.ascent.bean.Product;
-import com.ascent.util.ShoppingCart;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import com.ascent.client.Session;
+import com.ascent.shared.dto.ProductDto;
 
 /**
- * 这个类显示产品详细信息对话框
+ * 商品详情对话框。
+ *
+ * <p>
+ * “加入购物车”直接作用于传入的 {@link Session}，不再自己 new 一个购物车。
+ * </p>
+ *
  * @author ascent
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("serial")
 public class ProductDetailsDialog extends JDialog {
 
-	protected Product myProduct;
+	/** 商品。 */
+	private final ProductDto product;
 
-	protected Frame parentFrame;
+	/** 会话。 */
+	private final Session session;
 
-	protected JButton shoppingButton;
-
-	/**
-	 * 带三个参数的构造方法
-	 * @param theParentFrame 父窗体
-	 * @param theProduct 当前查看的商品对象
-	 * @param shoppingButton 购买按钮
-	 */
-	public ProductDetailsDialog(Frame theParentFrame, Product theProduct,
-			JButton shoppingButton) {
-		this(theParentFrame, "药品详细信息 " + theProduct.getProductname(),
-				theProduct, shoppingButton);
-	}
+	/** 是否已加入购物车。 */
+	private boolean addedToCart;
 
 	/**
-	 * 带四个参数的构造方法
-	 * @param theParentFrame 父窗体
-	 * @param theTitle 窗体标题
-	 * @param theProduct 当前查看的商品对象
-	 * @param shoppingButton 购买按钮
+	 * 构造。
+	 *
+	 * @param parent  父窗口
+	 * @param product 商品
+	 * @param session 会话
 	 */
-	public ProductDetailsDialog(Frame theParentFrame, String theTitle,
-			Product theProduct, JButton shoppingButton) {
-
-		super(theParentFrame, theTitle, true);
-
-		myProduct = theProduct;
-		parentFrame = theParentFrame;
-		this.shoppingButton = shoppingButton;
+	public ProductDetailsDialog(Frame parent, ProductDto product, Session session) {
+		super(parent, "药品详细信息 - " + product.getName(), true);
+		this.product = product;
+		this.session = session;
 
 		buildGui();
+		setMinimumSize(new Dimension(520, 340));
+		pack();
+		setLocationRelativeTo(parent);
 	}
 
 	/**
-	 * 用来构建显示商品信息窗体
+	 * 是否已加入购物车。
+	 *
+	 * @return 加入过返回 true
+	 */
+	public boolean isAddedToCart() {
+		return addedToCart;
+	}
+
+	/**
+	 * 构建界面。
 	 */
 	private void buildGui() {
+		JPanel root = new JPanel(new BorderLayout(12, 12));
+		root.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
+		root.add(buildInfoPanel(), BorderLayout.CENTER);
+		root.add(buildImagePanel(), BorderLayout.EAST);
+		root.add(buildButtonPanel(), BorderLayout.SOUTH);
+		setContentPane(root);
+	}
 
-		Container container = this.getContentPane();
+	/**
+	 * 左侧信息。
+	 *
+	 * @return 信息面板
+	 */
+	private JPanel buildInfoPanel() {
+		JPanel info = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.insets = new Insets(4, 0, 4, 12);
+		gbc.gridx = 0;
+		gbc.gridy = 0;
 
-		container.setLayout(new BorderLayout());
+		addField(info, gbc, "产品名", product.getName(), true);
+		addField(info, gbc, "CAS 号", product.getCas(), false);
+		addField(info, gbc, "分子式", product.getFormula(), false);
+		addField(info, gbc, "规格", product.getSpec(), false);
+		addField(info, gbc, "单价", "￥" + product.getPrice()
+				.setScale(2, RoundingMode.HALF_UP).toPlainString(), false);
+		addField(info, gbc, "库存", product.getStock() + " 件", false);
+		addField(info, gbc, "分类", product.getCategory(), false);
 
-		JPanel topPanel = new JPanel();
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.add(info, BorderLayout.NORTH);
+		return wrapper;
+	}
 
-		JPanel infoPanel = new JPanel();
-		infoPanel.setBorder(new EmptyBorder(10, 10, 0, 10));
+	/**
+	 * 加一行。
+	 *
+	 * @param grid   网格
+	 * @param gbc    约束
+	 * @param name   名称
+	 * @param value  值
+	 * @param strong 是否加粗
+	 */
+	private void addField(JPanel grid, GridBagConstraints gbc, String name, String value,
+			boolean strong) {
+		JLabel key = new JLabel(name + "：");
+		key.setForeground(new Color(0x66, 0x66, 0x66));
+		JLabel val = new JLabel(value == null || value.trim().isEmpty() ? "-" : value);
+		if (strong) {
+			val.setFont(val.getFont().deriveFont(Font.BOLD, 15f));
+		}
+		grid.add(key, gbc);
+		gbc.gridx = 1;
+		grid.add(val, gbc);
+		gbc.gridx = 0;
+		gbc.gridy++;
+	}
 
-		infoPanel.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+	/**
+	 * 右侧结构图。
+	 *
+	 * @return 图片面板
+	 */
+	private JPanel buildImagePanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setBorder(BorderFactory.createTitledBorder("结构图"));
 
-		c.gridx = 0;
-		c.gridy = 1;
-		c.gridwidth = 3;
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.WEST;
-		c.insets = new Insets(10, 0, 2, 10);
-		JLabel artistLabel = new JLabel("产品名:  " + myProduct.getProductname());
-		artistLabel.setForeground(Color.black);
-		infoPanel.add(artistLabel, c);
+		JLabel picture;
+		URL imageUrl = getClass().getResource("/images/" + product.getStructure());
+		if (imageUrl == null) {
+			picture = new JLabel("（暂无结构图）");
+			picture.setForeground(new Color(0x99, 0x99, 0x99));
+		} else {
+			picture = new JLabel(new ImageIcon(imageUrl));
+			picture.setToolTipText(product.getName());
+		}
+		picture.setAlignmentX(CENTER_ALIGNMENT);
 
-		c.gridy = GridBagConstraints.RELATIVE;
-		c.insets = new Insets(2, 0, 10, 10);
-		JLabel titleLabel = new JLabel("CAS号:  " + myProduct.getCas());
-		titleLabel.setForeground(Color.black);
-		infoPanel.add(titleLabel, c);
+		JScrollPane scroll = new JScrollPane(picture);
+		scroll.setBorder(null);
+		scroll.setPreferredSize(new Dimension(220, 220));
 
-		JLabel categoryLabel = new JLabel("公式:  " + myProduct.getFormula());
-		c.insets = new Insets(2, 0, 2, 0);
-		categoryLabel.setForeground(Color.black);
-		infoPanel.add(categoryLabel, c);
+		panel.add(Box.createVerticalStrut(4));
+		panel.add(scroll);
+		return panel;
+	}
 
-		JLabel durationLabel = new JLabel("数量:  " + myProduct.getRealstock());
-		durationLabel.setForeground(Color.black);
-		infoPanel.add(durationLabel, c);
+	/**
+	 * 底部按钮。
+	 *
+	 * @return 按钮面板
+	 */
+	private JPanel buildButtonPanel() {
+		JPanel buttons = new JPanel();
+		JButton closeButton = new JButton("关闭");
+		JButton addButton = new JButton("加入购物车");
+		UiTheme.polish(closeButton);
+		UiTheme.polish(addButton);
+		addButton.setPreferredSize(new Dimension(110, 30));
 
-		JLabel priceLabel = new JLabel("类别： " + myProduct.getCategory());
-		c.insets = new Insets(10, 0, 2, 0);
-		priceLabel.setForeground(Color.black);
-		infoPanel.add(priceLabel, c);
-
-		c.gridx = 3;
-		c.gridy = 1;
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridheight = 5;
-		c.fill = GridBagConstraints.NONE;
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-		c.insets = new Insets(5, 5, 20, 0);
-		String imageName = myProduct.getStructure();
-		ImageIcon recordingIcon = null;
-		JLabel recordingLabel = null;
-
-		// 读取图片
-		try {
-			if (imageName.trim().length() == 0) {
-				recordingLabel = new JLabel("  图片不存在  ");
-			} else {
-				recordingIcon = new ImageIcon(getClass().getResource("/images/" + imageName));
-				recordingLabel = new JLabel(recordingIcon);
+		closeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				setVisible(false);
 			}
-		} catch (Exception exc) {
-			recordingLabel = new JLabel("  图片不存在  ");
-		}
+		});
+		addButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				if (session != null) {
+					session.addProduct(product);
+					addedToCart = true;
+				}
+				setVisible(false);
+			}
+		});
 
-		recordingLabel.setBorder(BorderFactory.createRaisedBevelBorder());
-		recordingLabel.setToolTipText(myProduct.getProductname());
-
-		infoPanel.add(recordingLabel, c);
-
-		container.add(BorderLayout.NORTH, infoPanel);
-
-		JPanel bottomPanel = new JPanel();
-		JButton okButton = new JButton("OK");
-		bottomPanel.add(okButton);
-		JButton purchaseButton = new JButton("购买");
-		bottomPanel.add(purchaseButton);
-		container.add(BorderLayout.SOUTH, bottomPanel);
-
-		okButton.addActionListener(new OkButtonActionListener());
-		purchaseButton.addActionListener(new PurchaseButtonActionListener());
-
-		this.pack();
-
-		Point parentLocation = parentFrame.getLocation();
-		this.setLocation(parentLocation.x + 50, parentLocation.y + 50);
-	}
-
-	/**
-	 * 处理"OK"按钮的内部类
-	 */
-	class OkButtonActionListener implements ActionListener {
-		/**
-		 * 处理对应组件的操作事件。
-		 */
-		public void actionPerformed(ActionEvent event) {
-			setVisible(false);
-		}
-	}
-
-	/**
-	 * 处理"购买"按钮的内部类
-	 */
-	class PurchaseButtonActionListener implements ActionListener {
-		ShoppingCart shoppingCar = new ShoppingCart();
-		/**
-		 * 处理对应组件的操作事件。
-		 */
-		public void actionPerformed(ActionEvent event) {
-			shoppingCar.addProduct(myProduct);
-			shoppingButton.setEnabled(true);
-			setVisible(false);
-		}
+		buttons.add(closeButton);
+		buttons.add(addButton);
+		return buttons;
 	}
 }

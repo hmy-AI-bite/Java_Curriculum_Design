@@ -1,187 +1,354 @@
-/**
- * 功能简介：实现RegistFrame类的相关业务功能。
- */
 package com.ascent.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-import java.io.IOException;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import com.ascent.util.UserDataClient;
+import com.ascent.client.AuthController;
+import com.ascent.client.SocketAuthController;
 
 /**
- * 用户注册窗体
+ * 用户注册窗体。
+ *
+ * <p>
+ * 校验在本地先做一遍（空账号、空密码、两次不一致），通过后才发请求；
+ * 请求走 {@link AuthController}，服务端返回 {@code USER_EXISTS} 时提示换账号。
+ * </p>
+ *
  * @author ascent
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("serial")
 public class RegistFrame extends JFrame {
+
+	/** 账号。 */
 	private JTextField userText;
 
+	/** 密码。 */
 	private JPasswordField password;
 
+	/** 重复密码。 */
 	private JPasswordField repassword;
 
+	/** 提示。 */
 	private JLabel tip;
 
-	private UserDataClient userDataClient;
+	/** 注册控制器。 */
+	private AuthController auth;
+
+	/** 注册按钮。 */
+	private JButton registButton;
+
+	/** 返回按钮。 */
+	private JButton exitButton;
+
+	/** 是否请求中。 */
+	private boolean busy;
 
 	/**
-	 * 默认构造方法，初始化用户注册窗体
+	 * 默认构造。
 	 */
 	public RegistFrame() {
-		this.setTitle("用户注册");
-
-		Container container = this.getContentPane();
-		container.setLayout(new BorderLayout());
-
-		JPanel registPanel = new JPanel();
-
-		JLabel userLabel = new JLabel("用户帐号：");
-		JLabel passwordLabel = new JLabel("用户密码：");
-		JLabel repasswordLabel = new JLabel("重复密码：");
-
-		userText = new JTextField(15);
-		password = new JPasswordField(15);
-		repassword = new JPasswordField(15);
-		JButton regist = new JButton("注册");
-		JButton exitButton = new JButton("退出");
-
-		registPanel.add(userLabel);
-		registPanel.add(new JScrollPane(userText));
-		registPanel.add(passwordLabel);
-		registPanel.add(new JScrollPane(password));
-		registPanel.add(repasswordLabel);
-		registPanel.add(new JScrollPane(repassword));
-		registPanel.add(regist);
-		registPanel.add(exitButton);
-
-		setResizable(false);
-		setSize(260, 180);
-		setLocation(300, 100);
-
-		JPanel tipPanel = new JPanel();
-
-		tip = new JLabel();
-
-		tipPanel.add(tip);
-
-		container.add(BorderLayout.CENTER, registPanel);
-		container.add(BorderLayout.NORTH, tip);
-
-		exitButton.addActionListener(new ExitActionListener());
-		regist.addActionListener(new RegistActionListener());
-		repassword.addFocusListener(new MyFocusListener());
-		this.addWindowListener(new WindowCloser());
-		this.addWindowFocusListener(new WindowFocusListener() {// 设置父窗口
-					/**
-					 * 处理窗口获得焦点事件。
-					 */
-					public void windowGainedFocus(WindowEvent e) {
-					}
-					/**
-					 * 处理窗口失去焦点事件。
-					 */
-					public void windowLostFocus(WindowEvent e) {
-						e.getWindow().toFront();
-					}
-				});
-		try {
-			userDataClient = new UserDataClient();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		this(null);
 	}
 
 	/**
-	 * 退出按钮事件监听
-	 * @author ascent
+	 * 带初始账号的构造。
+	 *
+	 * @param initialUsername 初始账号
 	 */
-	class ExitActionListener implements ActionListener {
-		/**
-		 * 处理对应组件的操作事件。
-		 */
-		public void actionPerformed(ActionEvent event) {
-			setVisible(false);
-			dispose();
+	public RegistFrame(String initialUsername) {
+		setTitle("AscentSys - 用户注册");
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setResizable(true);
+
+		buildGui();
+		if (initialUsername != null) {
+			userText.setText(initialUsername);
+		}
+		addWindowListener(new WindowCloser());
+
+		pack();
+		setMinimumSize(new Dimension(400, 340));
+		setLocationRelativeTo(null);
+
+		if (initialUsername != null && !initialUsername.isEmpty()) {
+			password.requestFocusInWindow();
+		} else {
+			userText.requestFocusInWindow();
 		}
 	}
 
 	/**
-	 * 注册按钮事件监听
-	 * @author ascent
+	 * 构建界面。
+	 */
+	private void buildGui() {
+		JPanel root = new JPanel(new BorderLayout(0, 12));
+		root.setBorder(BorderFactory.createEmptyBorder(18, 26, 18, 26));
+		root.add(buildHeader(), BorderLayout.NORTH);
+		root.add(buildForm(), BorderLayout.CENTER);
+		root.add(buildButtons(), BorderLayout.SOUTH);
+		setContentPane(root);
+	}
+
+	/**
+	 * 标题。
+	 *
+	 * @return 标题面板
+	 */
+	private JPanel buildHeader() {
+		JPanel header = new JPanel();
+		header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
+
+		JLabel title = new JLabel("注册新用户");
+		title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
+		title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		JLabel subtitle = new JLabel("账号不能重复，密码不能为空");
+		subtitle.setForeground(new Color(0x66, 0x66, 0x66));
+		subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		header.add(title);
+		header.add(Box.createVerticalStrut(6));
+		header.add(subtitle);
+		return header;
+	}
+
+	/**
+	 * 表单。
+	 *
+	 * @return 表单面板
+	 */
+	private JPanel buildForm() {
+		JPanel form = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(6, 6, 6, 6);
+		gbc.anchor = GridBagConstraints.WEST;
+
+		userText = new JTextField(18);
+		password = new JPasswordField(18);
+		repassword = new JPasswordField(18);
+		UiTheme.polish(userText);
+		UiTheme.polish(password);
+		UiTheme.polish(repassword);
+
+		tip = new JLabel(" ");
+		tip.setForeground(new Color(0x66, 0x66, 0x66));
+
+		addRow(form, gbc, 0, new JLabel("用户账号"), userText);
+		addRow(form, gbc, 1, new JLabel("用户密码"), password);
+		addRow(form, gbc, 2, new JLabel("重复密码"), repassword);
+
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		form.add(tip, gbc);
+		return form;
+	}
+
+	/**
+	 * 加一行。
+	 *
+	 * @param form  表单
+	 * @param gbc   约束
+	 * @param row   行号
+	 * @param label 标签
+	 * @param field 输入框
+	 */
+	private void addRow(JPanel form, GridBagConstraints gbc, int row, JLabel label,
+			JTextField field) {
+		gbc.gridx = 0;
+		gbc.gridy = row;
+		gbc.gridwidth = 1;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.weightx = 0.0;
+		form.add(label, gbc);
+		gbc.gridx = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.weightx = 1.0;
+		form.add(field, gbc);
+	}
+
+	/**
+	 * 按钮。
+	 *
+	 * @return 按钮面板
+	 */
+	private JPanel buildButtons() {
+		JPanel buttons = new JPanel();
+		registButton = new JButton("注册");
+		exitButton = new JButton("返回登录");
+		UiTheme.polish(registButton);
+		UiTheme.polish(exitButton);
+		registButton.setPreferredSize(new Dimension(88, 30));
+		buttons.add(registButton);
+		buttons.add(exitButton);
+
+		registButton.addActionListener(new RegistActionListener());
+		exitButton.addActionListener(new ExitActionListener());
+		return buttons;
+	}
+
+	/**
+	 * 提示。
+	 *
+	 * @param message 文本
+	 * @param error   是否错误样式
+	 */
+	private void showTip(String message, boolean error) {
+		tip.setText(message == null || message.isEmpty() ? " " : message);
+		tip.setForeground(error ? new Color(0xC0, 0x39, 0x2B) : new Color(0x2E, 0x7D, 0x32));
+	}
+
+	/**
+	 * 忙碌状态。
+	 *
+	 * @param running 是否请求中
+	 */
+	private void setBusy(boolean running) {
+		busy = running;
+		registButton.setEnabled(!running);
+		exitButton.setEnabled(!running);
+		setCursor(Cursor.getPredefinedCursor(running ? Cursor.WAIT_CURSOR : Cursor.DEFAULT_CURSOR));
+	}
+
+	/**
+	 * 关闭控制器。
+	 */
+	private void closeController() {
+		if (auth != null) {
+			auth.close();
+			auth = null;
+		}
+	}
+
+	/**
+	 * 本地校验。
+	 *
+	 * @param username 账号
+	 * @param pwd      密码
+	 * @param confirm  重复密码
+	 * @return 错误提示，通过返回 null
+	 */
+	private String validate(String username, String pwd, String confirm) {
+		if (username.isEmpty()) {
+			return "用户账号不能为空。";
+		}
+		if (pwd.isEmpty()) {
+			return "用户密码不能为空。";
+		}
+		if (confirm.isEmpty()) {
+			return "请再次输入密码。";
+		}
+		if (!pwd.equals(confirm)) {
+			return "两次输入的密码不一致。";
+		}
+		return null;
+	}
+
+	/**
+	 * 执行注册。
+	 */
+	private void doRegister() {
+		if (busy) {
+			return;
+		}
+		final String username = userText.getText().trim();
+		final String pwd = new String(password.getPassword());
+		final String confirm = new String(repassword.getPassword());
+
+		String problem = validate(username, pwd, confirm);
+		if (problem != null) {
+			showTip(problem, true);
+			return;
+		}
+
+		showTip("正在提交注册...", false);
+		setBusy(true);
+
+		AsyncRunner.run(new AsyncRunner.Task<Boolean>() {
+			public Boolean run() throws Exception {
+				closeController();
+				auth = new SocketAuthController();
+				return auth.register(username, pwd);
+			}
+		}, new AsyncRunner.Success<Boolean>() {
+			public void run(Boolean created) {
+				setBusy(false);
+				closeController();
+				if (created == null || !created) {
+					showTip("用户名已存在，请换一个。", true);
+					userText.requestFocusInWindow();
+					userText.selectAll();
+					return;
+				}
+				showTip("注册成功，请返回登录。", false);
+				password.setText("");
+				repassword.setText("");
+				registButton.setEnabled(false);
+			}
+		}, new AsyncRunner.Failure() {
+			public void run(Exception error) {
+				setBusy(false);
+				closeController();
+				showTip(Errors.friendly(error), true);
+			}
+		}, null);
+	}
+
+	/**
+	 * 关闭窗口。
+	 */
+	private void close() {
+		closeController();
+		dispose();
+	}
+
+	/**
+	 * 注册按钮。
 	 */
 	class RegistActionListener implements ActionListener {
-		/**
-		 * 处理对应组件的操作事件。
-		 */
-		public void actionPerformed(ActionEvent arg0) {
-			// 用户注册操作
-			boolean bo = userDataClient.addUser(userText.getText(), new String(password.getPassword()));
-			if (bo) {
-				tip.setText("注册成功！");
-			} else {
-				tip.setText("用户名已存在！");
-			}
+		public void actionPerformed(ActionEvent event) {
+			doRegister();
 		}
 	}
 
 	/**
-	 * "关闭窗口"事件处理内部类
-	 * @author ascent
+	 * 返回按钮。
+	 */
+	class ExitActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+			close();
+		}
+	}
+
+	/**
+	 * 关闭窗口。
 	 */
 	class WindowCloser extends WindowAdapter {
-		/**
-		 * 处理窗口关闭事件。
-		 */
-		public void windowClosing(WindowEvent e) {
-			setVisible(false);
-			dispose();
-		}
-	}
-
-	/**
-	 * 密码不一致触发的事件监听器处理类
-	 * @author ascent
-	 */
-	class MyFocusListener implements FocusListener {
-
-		/**
-		 * 处理组件获得焦点事件。
-		 */
-		public void focusGained(FocusEvent arg0) {
-		}
-
-		/**
-		 * 处理组件失去焦点事件。
-		 */
-		public void focusLost(FocusEvent e) {
-			if (e.getSource().equals(password)) {
-				if (new String(password.getPassword()) == "" || new String(password.getPassword()) == null) {
-					tip.setText("密码不能为空!");
-				}
-			} else if (e.getSource().equals(repassword)) {
-				if (!new String(password.getPassword()).equals(new String(password.getPassword()))) {
-					tip.setText("两次密码不一致！");
-				}
-			} else {
-				tip.setText("");
-			}
+		public void windowClosing(WindowEvent event) {
+			close();
 		}
 	}
 }
